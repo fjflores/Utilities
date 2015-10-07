@@ -15,6 +15,11 @@ function dataClean = replaceartifact( signal, t, artTimes )
 % Beware that looks for times, not points (unsafe, but ok as long as only
 % one signal is being processed).
 
+% first, remove any artifact time lower than t(1) or greater than t(end)
+idx1 = artTimes( :, 1 ) < t( 1 );
+idx2 = artTimes( :, 2 ) > t( end );
+artTimes( logical(idx1+idx2),: ) = [ ];
+
 % assess htat artifact times are within the range of time vector.
 remIdx = logical( ( artTimes( :, 1 ) < t( 1 ) ) + ( artTimes( :, 2 ) > t( end ) ) );
 artTimes( remIdx, : ) = [ ];
