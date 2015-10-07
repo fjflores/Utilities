@@ -1,0 +1,7 @@
+# Extensions to ignore
+*.asv
+*.csv
+*.zip
+*.fig
+*.mexa64
+*.mexw64
