@@ -30,26 +30,25 @@ artTimes( remIdx, : ) = [ ];
 remIdx = false( length( t ), 1 );
 
 % first, remove artifact epochs
-hWB = waitbar(0,'Removing artifacts...');
+fprintf( 'Removing artifacts...' )
 for artCnt = 1 : size( artTimes, 1 )
-    
     thisStart = artTimes( artCnt, 1 ) - 0.5;
     thisEnd = artTimes( artCnt, 2 ) + 0.5;
     artIdx = t >= thisStart & t <= thisEnd;
     remIdx = remIdx + artIdx;
-    waitbar( artCnt ./ size( artTimes, 1 ) )
     
 end
-close( hWB )
 remIdx = logical( remIdx );
 
 switch meth
     case( 'nan' )
+        fprintf( 'Replacing with nans' )
         % replaces artifacts with nans
         dataClean = signal;
         dataClean( remIdx ) = nan;
         
     case( 'linear' )
+        fprintf( 'Replacing with nearest linear fit' )
         % replaces artifacts with linear interpolation
         % find discontinuity points
         dataClean = signal;
