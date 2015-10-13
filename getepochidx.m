@@ -18,8 +18,8 @@ function idx = getepochidx( ts, epochStart, epochLength )
 idx = false( length( ts ), 1 );
 dt = ts( 2 ) - ts( 1 );
 offset = ts( 1 );
-idxStart = round( ( epochStart - offset + 1 ) / dt );
-nPoints = round( epochLength / dt );
+idxStart = ceil( ( epochStart - offset + 1 ) / dt );
+nPoints = ceil( epochLength / dt );
     
 if ( idxStart + nPoints ) <= length( ts );
     idx( idxStart : idxStart + nPoints - 1 ) = true;
