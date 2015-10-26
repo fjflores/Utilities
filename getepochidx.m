@@ -16,10 +16,26 @@ function idx = getepochidx( ts, epochStart, epochLength )
 % positions of the desired epoch to extract.
 
 idx = false( length( ts ), 1 );
-dt = ts( 2 ) - ts( 1 );
+
+% deal with rounding problems derived from non-integer sampling rates
+Fs = 1 / mean( diff( ts ) );
+
+% round Fs to the second decimal.
+Fs = ( round( Fs * 100 ) ./ 100 );
+
+% and now get dt
+dt = 1 ./ Fs;
 offset = ts( 1 );
-idxStart = ceil( ( epochStart - offset + 1 ) / dt );
-nPoints = ceil( epochLength / dt );
+firstTime = ( epochStart - offset + 1 ) / dt;
+
+if firstTime < 0.5
+    idxStart = ceil( firstTime );
+    
+else
+    idxStart = round( firstTime );
+    
+end
+nPoints = round( epochLength / dt );
     
 if ( idxStart + nPoints ) <= length( ts );
     idx( idxStart : idxStart + nPoints - 1 ) = true;
