@@ -1,15 +1,16 @@
-function dataClean = replaceartifact( signal, t, artTimes, meth )
+function [ dataClean, remIdx ] = replaceartifact( signal, t, artTimes, meth )
 %REPLACEARTIFACT replaces artifacts with nans.
 %
 % Usage:
-% dataClean = replaceartifact( signal, t, artTimes )
+% dataClean = replaceartifact( signal, t, artTimes, meth )
+% [ dataClean, remIdx ] = replaceartifact( signal, t, artTimes, meth )
 %
 % Input:
 % signal: column vector to be processed.
 % t: timestamps for the signal vector.
 % artTimes = two-colum matrix of start and end times for artifacts.
 % meth: either 'nan' to replace withs nan's, or 'linear', to interpolate
-% witha  linear function.
+% with a linear function.
 %
 % Output:
 % dataClean = data artifacts removed.
