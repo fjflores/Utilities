@@ -43,13 +43,13 @@ remIdx = logical( remIdx );
 
 switch meth
     case( 'nan' )
-        fprintf( 'Replacing with nans' )
+        fprintf( 'Replacing with nans\n' )
         % replaces artifacts with nans
         dataClean = signal;
         dataClean( remIdx ) = nan;
         
     case( 'linear' )
-        fprintf( 'Replacing with nearest linear fit' )
+        fprintf( 'Replacing with nearest linear fit\n' )
         % replaces artifacts with linear interpolation
         % find discontinuity points
         dataClean = signal;
