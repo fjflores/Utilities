@@ -12,13 +12,13 @@ i = 1;
 hW = waitbar( 0, 'Please wait...' );
 while i <= nFiles
     figName = files( i ).name;
-    hF = openfig( figName );
+    uiopen( figName, 1 );
     [ pathstr, name, ext ] = fileparts( figName );
     newFigName = [ name '.eps' ];
     print( newFigName, '-depsc2' );
     waitbar( i ./ nFiles );
     i = i + 1;
-    close( hF );
+    close( gcf );
     
 end
 
