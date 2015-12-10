@@ -12,24 +12,24 @@ function cutSig = procustesbed( signal, nTotal )
 % cutSig: longer or shorter signal.
 
 if length( signal ) < nTotal
-    disp(' in shorter case')
+%     disp(' in shorter case')
     deltaLength = nTotal - length( signal );
-    disp( [ '  delta = ' num2str( deltaLength ) ] )
+%     disp( [ '  delta = ' num2str( deltaLength ) ] )
     seg = nan( deltaLength, 1 );
     signal = [ signal; seg ];
     cutSig = signal;
-    disp( [ '  final length: ' num2str( length(signal) ) ] )
+%     disp( [ '  final length: ' num2str( length(signal) ) ] )
     
 elseif length( signal ) > nTotal
-    disp(' in longer')
+%     disp(' in longer')
     deltaLength = length( signal ) - nTotal;
-    disp( [ '  delta = ' num2str( deltaLength ) ] )
+%     disp( [ '  delta = ' num2str( deltaLength ) ] )
     signal( end - deltaLength + 1 : end ) = [ ];
     cutSig  = signal;
-    disp( [ '  final length: ' num2str( length(signal) ) ] )
+%     disp( [ '  final length: ' num2str( length(signal) ) ] )
     
 else
-    disp( 'Signal length matches desired length' )
+    disp( 'Signal length exactly matches desired length' )
     cutSig = signal;
     return
     
