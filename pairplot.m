@@ -29,7 +29,7 @@ elseif nargin < 3
 end
 
 % throw and exception if there are nan's present
-if sum( isnan( dataMat ) ) > 0
+if sum( isnan( data ) ) > 0
     error( 'Data cannot contain nan values' )
     
 end
