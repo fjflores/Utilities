@@ -9,7 +9,7 @@ function [ segments, nSegments ] = makesegments( signal, Fs, movingWin )
 % [ segments, nSegments ] = makesegments( signal, Fs, movingWin )
 % 
 % Input:
-% signal: timeseries vector to be segmented, in samples x 1 (no matrix)
+% signal: timeseries vector to be segmented, in samples x channels.
 % Fs: sampling frequency.
 % movingWin: 2-element vector with elements [ length step ], in secs if Fs 
 % is in Hz.
@@ -17,6 +17,13 @@ function [ segments, nSegments ] = makesegments( signal, Fs, movingWin )
 % Output:
 % segments: matrix in samples per window x number of segments;
 % nSegments: number of segments. Useful to preallocate matrices.
+
+% check for matrix input, and linearize if true.
+[ ~, n ] = size( signal );
+if n > 1
+    signal = signal( : );
+    
+end
 
 N = length( signal );
 nWin = round( Fs * movingWin( 1 ) ); % number of samples in window
