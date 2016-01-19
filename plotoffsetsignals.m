@@ -38,3 +38,4 @@ for sigCnt = 1 : n
     
 end
 axis tight
+hold off
