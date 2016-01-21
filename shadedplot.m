@@ -39,29 +39,32 @@ function  [ha hb hc] = shadedplot(x, y1, y2, varargin)
 
  
 % plot the shaded area
-y = [y1 (y2-y1)]; 
-ha = area(x, y);
-set(ha(1), 'FaceColor', 'none') % this makes the bottom area invisible
-set(ha, 'LineStyle', 'none')
+y = [ y1 ( y2 - y1 ) ]; 
+ha = area( x, y );
+set( ha( 1 ), 'FaceColor', 'none' ) % this makes the bottom area invisible
+set( ha, 'LineStyle', 'none' )
 
  
 % plot the line edges
 hold on 
-hb = plot(x, y1, 'LineWidth', 1);
-hc = plot(x, y2, 'LineWidth', 1);
+hb = plot( x, y1, 'LineWidth', 1 );
+hc = plot( x, y2, 'LineWidth', 1 );
 hold off
-
  
 % set the line and area colors if they are specified
-switch length(varargin)
+switch length( varargin )
     case 0
+        
     case 1
-        set(ha(2), 'FaceColor', varargin{1})
+        set( ha( 2 ), 'FaceColor', varargin{ 1 } )
+        
     case 2
-        set(ha(2), 'FaceColor', varargin{1})
-        set(hb, 'Color', varargin{2})
-        set(hc, 'Color', varargin{2})
+        set( ha( 2 ), 'FaceColor', varargin{ 1 })
+        set( hb, 'Color', varargin{ 2 } )
+        set( hc, 'Color', varargin{ 2 } )
+        
     otherwise
+        
 end
 
  
