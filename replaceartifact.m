@@ -36,7 +36,7 @@ for artCnt = 1 : size( artTimes, 1 )
     thisStart = artTimes( artCnt, 1 ) - 0.5;
     thisEnd = artTimes( artCnt, 2 ) + 0.5;
     artIdx = t >= thisStart & t <= thisEnd;
-    remIdx = remIdx + artIdx;
+    remIdx = remIdx + artIdx';
     
 end
 remIdx = logical( remIdx );
