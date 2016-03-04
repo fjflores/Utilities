@@ -27,6 +27,9 @@ elseif nargin < 2
 elseif nargin < 3
     [ m, n ] = size( sigMat );
     t = 1 : m;
+    
+else
+    [ m, n ] = size( sigMat );
 
 end
     
