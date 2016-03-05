@@ -21,13 +21,8 @@ function [ dataClean, remIdx ] = replaceartifact( signal, t, artTimes, meth )
 % first, remove any artifact time lower than t(1) or greater than t(end)
 idx1 = artTimes( :, 1 ) < t( 1 );
 idx2 = artTimes( :, 2 ) > t( end );
-artTimes( logical(idx1+idx2),: ) = [ ];
-
-% assess htat artifact times are within the range of time vector.
-remIdx = logical( ( artTimes( :, 1 ) < t( 1 ) ) + ( artTimes( :, 2 ) > t( end ) ) );
-artTimes( remIdx, : ) = [ ];
-
-% % tsKeep = t;
+testIdx = logical( idx1 + idx2 );
+artTimes( testIdx,: ) = [ ];
 remIdx = false( length( t ), 1 );
 
 % first, remove artifact epochs
@@ -36,7 +31,19 @@ for artCnt = 1 : size( artTimes, 1 )
     thisStart = artTimes( artCnt, 1 ) - 0.5;
     thisEnd = artTimes( artCnt, 2 ) + 0.5;
     artIdx = t >= thisStart & t <= thisEnd;
-    remIdx = remIdx + artIdx';
+    
+    % test that t is either a row or column vector. Throw exception
+    % otherwise.
+    if iscolumn( t )
+        remIdx = remIdx + artIdx;
+        
+    elseif isrow( t )
+        remIdx = remIdx + artIdx';
+        
+    else
+        error( 't must be a column or row vector' )
+        
+    end
     
 end
 remIdx = logical( remIdx );
@@ -70,6 +77,8 @@ switch meth
         
     otherwise
         error( 'wrong or no method provided' )
+        
+end
         
 end
 
