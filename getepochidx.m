@@ -18,7 +18,7 @@ function idx = getepochidx( ts, epochStart, epochLength )
 idx = false( length( ts ), 1 );
 
 % deal with rounding problems derived from non-integer sampling rates
-Fs = 1 / mean( diff( ts ) );
+Fs = 1 / abs( mean( diff( ts ) ) );
 
 % round Fs to the second decimal.
 Fs = ( round( Fs * 100 ) ./ 100 );
