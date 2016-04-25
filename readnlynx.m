@@ -1,21 +1,25 @@
-function nlynx = readnlynx( fileName, epoch, dec )
+function nlynx = readnlynx( fileName, relTs, epoch, dec )
 
 % READNLYNX      reads neuralynx channels.
 %
 % Syntax:
 % nlynx = readnlynx( fileName )
-% nlynx = readnlynx( fileName, epoch )
-% nlynx = readnlynx( fileName, epoch, dec )
+% nlynx = readnlynx( fileName, relTs )
+% nlynx = readnlynx( fileName, relTs, epoch )
+% nlynx = readnlynx( fileName, relTs, epoch, dec )
 %
 % Description:
 % nlynx = readnlynx(fileName) returns a strucuture with all the data
 % contained in the neuralynx channel, wether a csc, nst or ntt.
+% 
+% nlynx = readnlynx(fileName,relTs), whre relTs is boolean, subtracts the 
+% first timestamp if true, or leaves as it is if false. default = true.
 %
-% nlynx = readnlynx(fileName,epoch) where epoch is a two element vector,
+% nlynx = readnlynx(fileName,relTs,epoch) where epoch is a two element vector,
 % returns the data from epoch(1) to epoch(2). the units of epoch are
 % seconds.
 %
-% nlynx = readnlynx(fileName,epoch,dec) where dec is an integer scalar, 
+% nlynx = readnlynx(fileName,relTs,epoch,dec) where dec is an integer scalar, 
 % decimates the signal by the dec factor.
 % 
 % Examples:
@@ -34,10 +38,15 @@ function nlynx = readnlynx( fileName, epoch, dec )
 % with rate reduced csc files.
 
 if nargin < 2
+    relTs = true;
     epoch = [ ];
     dec = 1;
     
 elseif nargin < 3
+    epoch = [ ];
+    dec = 1;
+    
+elseif nargin < 4
     dec = 1;
     
 end
@@ -82,7 +91,7 @@ switch ext
             end
             
             % interpolate adn linearize timestamps
-            ts = interpts( dummyTs, Fs, true );
+            ts = interpts( dummyTs, Fs, relTs );
             
             % decimate if desired
             if dec > 1
