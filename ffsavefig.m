@@ -16,16 +16,16 @@ function ffsavefig( hFig, folder )
 set( hFig, 'PaperPositionMode', 'auto' )
 % If folder does not exist, create it.
 figName = 'Pfc_layers_states';
-fig2save = fullfile( figFold );
-folderFlag = exist( figFold, 'dir' );
+fig2save = fullfile( folder );
+folderFlag = exist( folder, 'dir' );
 if folderFlag == 7
     fprintf( 'Printing figure %s\n', figName );
     print( hFig, fig2save, '-dpng', '-r300' )
     
 else
     fprintf( 'Figure directory did not exist. Creating...' )
-    fprintf( '%s', figFold )
-    mkdir( figFold )
+    fprintf( '%s', folder )
+    mkdir( folder )
     print( hFig, fig2save, '-dpng', '-r600' )
     
 end
