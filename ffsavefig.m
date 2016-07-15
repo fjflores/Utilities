@@ -23,7 +23,7 @@ if folderFlag == 7
     print( hFig, fig2save, '-dpng', '-r300' )
     
 else
-    fprintf( 'Figure directory did not exist. Creating...' )
+    fprintf( 'Figure directory did not exist. Creating...\n' )
     fprintf( '%s', folder )
     mkdir( folder )
     print( hFig, fig2save, '-dpng', '-r600' )
