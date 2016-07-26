@@ -1,4 +1,4 @@
-function ffsavefig( hFig, folder )
+function ffsavefig( hFig, folder, figName )
 % FFSAVEFIG saves the figure to a specified directory.
 %
 % Usage:
@@ -15,7 +15,6 @@ function ffsavefig( hFig, folder )
 % Save figure.
 set( hFig, 'PaperPositionMode', 'auto' )
 % If folder does not exist, create it.
-figName = 'Pfc_layers_states';
 fig2save = fullfile( folder, figName );
 folderFlag = exist( folder, 'dir' );
 if folderFlag == 7
@@ -24,7 +23,7 @@ if folderFlag == 7
     
 else
     fprintf( 'Figure directory did not exist. Creating...\n' )
-    fprintf( '%s', folder )
+    fprintf( '%s\n', folder )
     mkdir( folder )
     print( hFig, fig2save, '-dpng', '-r600' )
     
