@@ -16,9 +16,9 @@ function idx = getepochidx( ts, epochStart, epochLength )
 % positions of the desired epoch to extract.
 
 % convert time values to integers, rounded to milliseconds resolution.
-tInt = floor( ts * 1000 );
-tStart = floor( epochStart * 1000 );
-tEnd = floor( epochLength .* 1000 ) + tStart;
+tInt = round( ts .* 1000 );
+tStart = round( epochStart * 1000 );
+tEnd = round( epochLength .* 1000 ) + tStart;
 
 % Check that firs time point is less or equal than startTime
 if tStart < tInt( 1 );
