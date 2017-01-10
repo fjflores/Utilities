@@ -7,7 +7,8 @@ function ffsavefig( hFig, folder, figName )
 % Input:
 % hFig: figure handle.
 % folder: directory where you want the figure to be saved. If it does not
-% exists, then it creates it.
+%         exists, then it creates it.
+% figName: Name of the figure.
 %
 % Output:
 % Saves the figure to the specified folder.
@@ -25,6 +26,6 @@ else
     fprintf( 'Figure directory did not exist. Creating...\n' )
     fprintf( '%s\n', folder )
     mkdir( folder )
-    print( hFig, fig2save, '-dpng', '-r600' )
+    print( hFig, fig2save, '-dpng', '-r300' )
     
 end
