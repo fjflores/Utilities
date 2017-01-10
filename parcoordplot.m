@@ -1,4 +1,4 @@
-function pairplot( data, med, color2plot )
+function parcoordplot( data, med, color2plot )
 
 % PAIRPLOT plots paired data points with trend lines
 %
