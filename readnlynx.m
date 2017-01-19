@@ -28,6 +28,11 @@ function nlynx = readnlynx( fileName, relTs, epoch, dec )
 
 % Copyright: Francisco J. Flores, 2010-06-29
 
+% Dependencies:
+% parsenlynxhdr.m
+% interpts.m
+% Nlx2MatCSC.m and mex files.
+
 % 2011-03-29 attempt to finish the function again. Just the LFP/EEG.
 % 2011-04-05 It works, but creates a large structure. May be useful for
 % short and/or subsampled continuous files.
