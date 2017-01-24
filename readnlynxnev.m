@@ -17,5 +17,5 @@ t = t' ./ 1e6;
 ids = ids'; 
 ttl = ttl';
 idx = 1 : numel( t );
-events = dataset( idx', t, ids, ttl, type,...
-    'VarNames',{ 'idx', 'Timestamp', 'EventID', 'Ttl', 'String' } )
+events = table( idx', t, ids, ttl, type,...
+    'VariableNames',{ 'idx', 'Timestamp', 'EventID', 'Ttl', 'String' } );
