@@ -18,4 +18,4 @@ ids = ids';
 ttl = ttl';
 idx = 1 : numel( t );
 events = table( idx', t, ids, ttl, type,...
-    'VariableNames',{ 'idx', 'Timestamp', 'EventID', 'Ttl', 'String' } );
+    'VariableNames',{ 'idx', 'TimeStamp', 'EventID', 'TTL', 'String' } );
