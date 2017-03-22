@@ -1,5 +1,5 @@
-function cleanT = prunetable( T )
-% PRUNETABLE eliminates the dangling cells from tables.
+function cleanT = prunetable( T, nanFlag )
+%PRUNETABLE eliminates the dangling cells from tables.
 % 
 % Usage:
 % cleanT = prunetable( T );
@@ -11,4 +11,14 @@ function cleanT = prunetable( T )
 % cleanT: pruned table.
 
 missIdx = ismissing( T );
-cleanT = T( ~all( missIdx, 2 ), ~all( missIdx, 1 ) );
+if nanFlag == false || nargin == 1
+    remIdx = missIdx;
+    
+else
+    nanIdxTemp = isnan( T{ :, 1 } );
+    [ m, n ] = size( missIdx );
+    nanIdx = repmat( nanIdxTemp, 1, n );
+    remIdx = missIdx | nanIdx;
+    
+end
+cleanT = T( ~all( remIdx, 2 ), ~all( remIdx, 1 ) );
