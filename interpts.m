@@ -21,6 +21,13 @@ if nargin == 2
     
 end
 
+% Check that timestamps have no discontinuities
+d2 = round( diff( diff( ts ) ) );
+if d2 ~= 0
+    warning( 'Ts vector is not monotonically increasing' )
+    
+end
+
 % generat interpolated timestamps by using vectorization.
 firstTs = ts( 1 ); % save first TS to relativize with respect to it
 dTs = diff( ts( 1 : 2 ) ); % get interval between record TS.
@@ -32,9 +39,9 @@ if sampleInterval >= dTs
     
 % else, procedd with with interpolation.
 else
-    interpSpace = linspace( 0, dTs - sampleInterval, 512 )'; % generate a matrix of 512 x nTs equally spaced points
+    interpSpace = linspace( 0, dTs - sampleInterval, dTs )'; % generate a matrix of 512 x nTs equally spaced points
     tBase = repmat( interpSpace, 1, length( ts ) ); % create base matrix with time intervals
-    tsMatrix = repmat( ts, 512, 1 ); % generate ts reapeated matrix.
+    tsMatrix = repmat( ts, dTs, 1 ); % generate ts reapeated matrix.
     intTs = tBase + tsMatrix; % sum base timestamps with real TS's.
     intTs = intTs( : );
     clear ts
