@@ -69,18 +69,15 @@ switch ext
             inpRange,...
             convFactor,...
             inpInverted ] = parsenlxhdr( hdr );
-        nSamp = Nlx2MatCSC( fileName, [ 0 0 0 1 0 ], 0, 1, [ ] );
-        chkNSamp = find( nSamp ~= 512, 1 );
+        nBuff = Nlx2MatCSC( fileName, [ 0 0 0 1 0 ], 0, 1, [ ] );
+        % Check if any record is incomplete, by checking buffer length.
+        buffCheck = any( diff( nBuff ) ); 
         
-        if ~isempty( chkNSamp )
-            warning('MATLAB:readnlynx','There are non-complete records in the file')
-            % in the near future, actually look for the wrong record, if is not
-            % the last
-            nSamp = nSamp( end );
-            
-        else
+        if ~buffCheck
             disp('All records are complete. Extracting data')
-            nSamp = length( nSamp );
+            buffLength = nBuff( 1 );
+            sprintf( 'Buffer length: %g', buffLength );
+            
             if isempty( epoch )
                 parm4 = 1; % extract all data
                 data = Nlx2MatCSC( fileName, [ 0 0 0 0 1 ], 0, parm4, [ ] );
@@ -116,7 +113,13 @@ switch ext
                 disp( ' Data recorded with positive downwards. No conversion.' )
                 data = tempData;
                 
-            end
+            end 
+            
+        else
+            warning('MATLAB:readnlynx','There are non-complete records in the file')
+            % in the near future, actually look for the wrong record, if is not
+            % the last
+            nSamp = nSamp( end );
             
         end
         
