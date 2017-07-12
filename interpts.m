@@ -1,19 +1,17 @@
 function intTs = interpts( ts, Fs, rel )
-
 % INTERPTS interpolates the timestamps output from DevilLynx
 %
 % USAGE:
 % intTs = interpts( ts, Fs, rel )
 %
-% INPUT:    Ts:     Original timestamps vector.
-%           Fs:     Sampling frequency.
-%           rel:    boolean flag, if true it will substract the first timestamp from
-%                   all the others, so it will start from zero. Default = 0
+% INPUT:
+% ts:     Original timestamps vector.
+% Fs:     Sampling frequency.
+% rel:    boolean flag, if true it will substract the first timestamp from
+%         all the others, so it will start from zero. Default = false.
 %
-% OUTPUT:   intTs: Interpolated timestamps.
-%
-% (C) Francisco J. Flores 2010-May-12
-
+% OUTPUT:   
+% intTs: Interpolated timestamps.
 
 % check user input
 if nargin == 2
