@@ -24,16 +24,16 @@ if nargin == 2
     
 end
 
-% Check that timestamps have no discontinuities
-d2 = round( diff( diff( ts ) ) );
-if d2 ~= 0
+% Check if nlynx timestamps have discontinuities.
+dTs = diff( ts );
+accel = round( diff( dTs ) );
+if any( accel )
     warning( 'Ts vector is not monotonically increasing' )
     
 end
 
-% generat interpolated timestamps by using vectorization.
+% generate interpolated timestamps by using vectorization.
 firstTs = ts( 1 ); % save first TS to relativize with respect to it
-dTs = diff( ts( 1 : 2 ) ); % get interval between record TS.
 sampleInterval = 1 / Fs;
 
 % check that timestamps are not already interpolated.
