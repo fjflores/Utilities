@@ -10,9 +10,9 @@ function intTs = interpts( ts, Fs, rel )
 % rel:    boolean flag, if true it will substract the first timestamp from
 %         all the others, so it will start from zero. Default = false.
 %
-% Output:   
+% Output:
 % intTs: Interpolated timestamps.
-% 
+%
 % Example:
 % ts = [ 0 : 2 : 4 6 ]; % simulate nlynx original timestamps.
 % intTS = interpts( ts, 1 ); % Assume 1 Hz sampling frequency.
@@ -24,34 +24,29 @@ if nargin == 2
     
 end
 
+% save first TS to relativize with respect to it
+firstTs = ts( 1 );
+
+% Get sample interval, and convert to microseconds.
+sampleInterval = 1 / Fs * 1e6;
+
 % Check if nlynx timestamps have discontinuities.
 dTs = diff( ts );
 accel = round( diff( dTs ) );
 if any( accel )
-    warning( 'Ts vector is not monotonically increasing' )
-    
-end
-
-% generate interpolated timestamps by using vectorization.
-firstTs = ts( 1 ); % save first TS to relativize with respect to it
-sampleInterval = 1 / Fs;
-
-% check that timestamps are not already interpolated.
-if sampleInterval >= dTs
-    error( 'Timestamps might be already interpolated' )
-    
-% else, procedd with with interpolation.
-else
-    interpSpace = linspace( 0, dTs - sampleInterval, dTs )'; % generate a matrix of 512 x nTs equally spaced points
-    tBase = repmat( interpSpace, 1, length( ts ) ); % create base matrix with time intervals
-    tsMatrix = repmat( ts, dTs, 1 ); % generate ts reapeated matrix.
-    intTs = tBase + tsMatrix; % sum base timestamps with real TS's.
-    intTs = intTs( : );
-    clear ts
-    
-    if rel == true
-        intTs = intTs - firstTs; % linearizes treal matrix and substract first TS to get relative time
+    warning( 'Ts vector does not increases monotonically. Using loop.' )
+    % Allocate matrix with zeros
+    tsMat = zeros( length( ts ), 512 );
+    for i = 2 : length( ts )
+        tsMat( i, : ) = linspace( ts( i - 1 ), ts( i ) - sampleInterval, 512 );
         
     end
+    intTs = tsMat( : );
+    
+else
+    disp( 'Ts vector increases monotonically. Using vectorization.' )
+    nTs = length( ts ) * 512;
+    intTs = linspace(...
+        ts( 1 ), ts( end ) + sampleInterval * 512, nTs ) * sampleInterval;
     
 end
