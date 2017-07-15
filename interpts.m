@@ -1,4 +1,4 @@
-function intTs = interpts( ts, Fs, rel )
+function intTs = interpts( ts, Fs, rel, buffSize )
 % INTERPTS interpolates the timestamps output from DevilLynx
 %
 % Usage:
@@ -21,6 +21,7 @@ function intTs = interpts( ts, Fs, rel )
 % check user input
 if nargin == 2
     rel = false;
+    buffSize = 512; % This is default.
     
 end
 
@@ -28,7 +29,7 @@ end
 firstTs = ts( 1 );
 
 % Get sample interval, and convert to microseconds.
-sampleInterval = 1 / Fs * 1e6;
+sampInterv = ( buffSize / Fs ) * 1e6;
 
 % Check if nlynx timestamps have discontinuities.
 dTs = diff( ts );
@@ -36,17 +37,19 @@ accel = round( diff( dTs ) );
 if any( accel )
     warning( 'Ts vector does not increases monotonically. Using loop.' )
     % Allocate matrix with zeros
-    tsMat = zeros( length( ts ), 512 );
+    tsMat = zeros( length( ts ), buffSize );
     for i = 2 : length( ts )
-        tsMat( i, : ) = linspace( ts( i - 1 ), ts( i ) - sampleInterval, 512 );
+        tmpFirstTs = ts( i - 1 );
+        tmpLastTs = ts( i ) - sampInterv;
+        tsMat( i, : ) = tmpFirstTs : sampInterv : tmpLastTs;
         
     end
     intTs = tsMat( : );
     
 else
     disp( 'Ts vector increases monotonically. Using vectorization.' )
-    nTs = length( ts ) * 512;
-    intTs = linspace(...
-        ts( 1 ), ts( end ) + sampleInterval * 512, nTs ) * sampleInterval;
+    nTs = length( ts ) * buffSize;
+    lastTs = ts( end ) + ( sampInterv * buffSize );
+    intTs = firstTs : sampInterv : lastTS;
     
 end
