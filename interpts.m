@@ -38,10 +38,22 @@ if any( accel )
     warning( 'Ts vector does not increases monotonically. Using loop.' )
     % Allocate matrix with zeros
     tsMat = zeros( length( ts ), buffSize );
-    for i = 2 : length( ts )
-        tmpFirstTs = ts( i - 1 );
-        tmpLastTs = ts( i ) - sampInterv;
-        tsMat( i, : ) = tmpFirstTs : sampInterv : tmpLastTs;
+    nRecs = length( ts );
+    
+    for recIdx = 1 : nRecs - 1
+        if recIdx < nRecs - 1
+            % deal with all records but the last one.
+            tmpFirstTs = ts( recIdx );
+            tmpLastTs = ts( recIdx + 1 ) - sampInterv;
+            tsMat( recIdx, : ) = tmpFirstTs : sampInterv : tmpLastTs;
+            
+        else
+            % Deals with the last record.
+            tmpFirstTs = ts( recIdx + 1 ) - sampInterv;
+            tmpLastTs = ts( recIdx + 1 ) + ( sampInterv * buffSize );
+            tsMat( recIdx + 1, : ) = tmpFirstTs : sampInterv : tmpLastTs;
+            
+        end
         
     end
     intTs = tsMat( : );
