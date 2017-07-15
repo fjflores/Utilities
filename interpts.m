@@ -14,14 +14,20 @@ function intTs = interpts( ts, Fs, rel, buffSize )
 % intTs: Interpolated timestamps.
 %
 % Example:
-% ts = [ 0 : 2 : 4 6 ]; % simulate nlynx original timestamps.
-% intTS = interpts( ts, 1 ); % Assume 1 Hz sampling frequency.
-% The result should be: 0 1 2 3 4 5 6.
+% Simulate nlynx original timestamps with 4 records.
+% ts = [ 0 : 512 : 1024 1536 ];
+% Assume Fs = 2713 Hz, which is typical neuralynx (32556/12). Also assume
+% buffer length to be 512, which is the only one Nlynx has.
+% intTS = interpts( ts, 2713, false );
+% plot( intTs, diff( intTs ) )
 
 % check user input
 if nargin == 2
     rel = false;
     buffSize = 512; % This is default.
+    
+elseif nargin == 3
+    buffSize = 512;
     
 end
 
@@ -62,6 +68,6 @@ else
     disp( 'Ts vector increases monotonically. Using vectorization.' )
     nTs = length( ts ) * buffSize;
     lastTs = ts( end ) + ( sampInterv * buffSize );
-    intTs = firstTs : sampInterv : lastTS;
+    intTs = firstTs : sampInterv : lastTs;
     
 end
