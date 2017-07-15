@@ -12,14 +12,7 @@ function intTs = interpts( ts, Fs, rel, buffSize )
 %
 % Output:
 % intTs: Interpolated timestamps.
-%
-% Example:
-% Simulate nlynx original timestamps with 4 records.
-% ts = [ 0 : 512 : 1024 1536 ];
-% Assume Fs = 2713 Hz, which is typical neuralynx (32556/12). Also assume
-% buffer length to be 512, which is the only one Nlynx has.
-% intTS = interpts( ts, 2713, false );
-% plot( intTs, diff( intTs ) )
+
 
 % check user input
 if nargin == 2
