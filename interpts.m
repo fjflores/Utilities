@@ -39,18 +39,20 @@ if any( accel )
     tsMat = zeros( length( ts ), buffSize );
     nRecs = length( ts );
     
-    for recIdx = 1 : nRecs - 1
-        if recIdx < nRecs - 1
+    for recIdx = 1 : nRecs
+        if recIdx < nRecs
             % deal with all records but the last one.
             tmpFirstTs = ts( recIdx );
-            tmpLastTs = ts( recIdx + 1 ) - sampInterv;
-            tsMat( recIdx, : ) = tmpFirstTs : sampInterv : tmpLastTs;
+            tmpLastTs = ts( recIdx ) + sampInterv;
+            tsMat( recIdx, : ) = linspace(...
+                tmpFirstTs, tmpLastTs, buffSize );
             
         else
             % Deals with the last record.
-            tmpFirstTs = ts( recIdx + 1 ) - sampInterv;
-            tmpLastTs = ts( recIdx + 1 ) + ( sampInterv * buffSize );
-            tsMat( recIdx + 1, : ) = tmpFirstTs : sampInterv : tmpLastTs;
+            tmpFirstTs = ts( recIdx );
+            tmpLastTs = ts( recIdx ) + sampInterv;
+            tsMat( recIdx, : ) = linspace(...
+                tmpFirstTs, tmpLastTs, buffSize );
             
         end
         
