@@ -55,7 +55,7 @@ elseif nargin < 4
     dec = 1;
     
 end
-epoch = epoch * 1000000;
+epoch = epoch * 1e6;
 
 [~, ~, ext] = fileparts( fileName );
 switch ext
@@ -68,7 +68,8 @@ switch ext
             filter,...
             inpRange,...
             convFactor,...
-            inpInverted ] = parsenlxhdr( hdr );
+            inpInverted,...
+            dspDelay ] = parsenlxhdr( hdr );
         nBuff = Nlx2MatCSC( fileName, [ 0 0 0 1 0 ], 0, 1, [ ] );
         % Check if any record is incomplete, by checking buffer length.
         buffCheck = any( diff( nBuff ) ); 
