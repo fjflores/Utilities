@@ -84,23 +84,21 @@ switch ext
                 data = Nlx2MatCSC( fileName, [ 0 0 0 0 1 ], 0, parm4, [ ] );
                 tempData = data( : ) * convFactor * 1e6; % convert AD units to microvolts
                 dummyTs = Nlx2MatCSC( fileName, [ 1 0 0 0 0 ], 0, parm4, [ ] );
+                firstTs = dummyTs( 1 );
                 
             else
                 parm4 = 4; % extract only given records
                 data = Nlx2MatCSC( fileName, [ 0 0 0 0 1 ], 0, parm4, epoch );
                 tempData = data( : ) * convFactor * 1e6; % convert AD units to microvolts
                 dummyTs = Nlx2MatCSC( fileName, [ 1 0 0 0 0 ], 0, parm4, epoch );
+                firstTs = dummyTs( 1 );
                 
             end
-            
-            % interpolate adn linearize timestamps
-            ts = interpts( dummyTs, Fs, relTs );
             
             % decimate if desired
             if dec > 1
                 disp( ' Decimating data...' )
                 tempData = decimate( tempData, dec, 'fir' );
-                ts = ts( 1 : dec : end );
                 Fs = Fs ./ dec;
                 
             end
@@ -124,16 +122,25 @@ switch ext
             
         end
         
+        % Create timestamps in seconds.
+        ts = linspace(...
+            0,...
+            ( length( data ) ./ Fs ) - ( 1 / Fs ),...
+            length( data ) );
+        
         nlynx = struct(...
             'fileName', fileName,...
             'Fs', Fs, ...
             'PhysUnits', 'uV', ...
             'ADChan', ADChan, ...
             'data', data, ...
-            'ts', ts ./ 1e6, ...
+            'ts', ts, ...
             'filter', filter,...
             'inputRange', inpRange, ...
-            'time', time );
+            'time', time,...
+            'dspDelay', dspDelay,...
+            'firstTs', firstTs,...
+            'positive', 'downwards' );
         
         disp('Done!')
         
