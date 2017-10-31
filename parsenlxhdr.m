@@ -1,4 +1,5 @@
-function [Fs,ADChan,time,filter,inpRange,convFactor,inpInverted] = parsenlxhdr(hdr)
+function [ Fs, ADChan, time, filter, inpRange, convFactor,...
+    inpInverted, dspDelay ] = parsenlxhdr( hdr )
 
 % PARSENLXHDR(HDR) parses old and new neuralynx header files.
 
@@ -21,7 +22,7 @@ if strcmp( class( hdr ), 'cell' )
         new = false;
         disp('Old header style')
         
-    elseif ~isempty(regexp(hdr{10},'-Cheetah','match'))
+    elseif ~isempty( regexp( hdr{ 10 }, '-Cheetah', 'match' ) )
         old = false;
         new = true;
         disp('Newest header style')
@@ -32,18 +33,19 @@ if strcmp( class( hdr ), 'cell' )
     end
         
     if old == true
-        Fs = str2double(cell2mat(regexp(hdr{13},' .+','match')));
-        ADChan = str2double(cell2mat(regexp(hdr{18},' .+','match')));
-        idxDate = cell2mat(regexp(hdr{3},'(..)/(..)/(.{4})','tokenExtents'));
-        date = [hdr{3}(idxDate(3,1):idxDate(3,2)) '-' hdr{3}(idxDate(1,:)) '-' hdr{3}(idxDate(2,:))];
+        Fs = str2double( cell2mat( regexp( hdr{ 13 }, ' .+', 'match' ) ) );
+        ADChan = str2double( cell2mat( regexp( hdr{ 18 }, ' .+', 'match') ) );
+        idxDate = cell2mat( regexp( hdr{ 3 }, '(..)/(..)/(.{4})', 'tokenExtents' ) );
+        date = [ hdr{ 3 } ( idxDate( 3, 1 ) : idxDate( 3, 2 ) )...
+            '-' hdr{ 3 }( idxDate( 1, : ) ) '-' hdr{3}(idxDate(2,:))];
         time.open = regexp(hdr{3},'( ..):(.+):(.+)','match');
         convFactor = str2double(cell2mat(regexp(hdr{15},' .+','match')));
         time.close = regexp(hdr{4},'( ..):(.+):(.+)','match');
         filter.low = str2double(cell2mat(regexp(hdr{21},' .+','match')));
         filter.high = str2double(cell2mat(regexp(hdr{25},' .+','match')));
         inpRange = str2double(cell2mat(regexp(hdr{19},' .+','match')));
-        inpInverted = lower(cell2mat(regexp(hdr{20},'True|False','match')));
-    
+        inpInverted = lower(cell2mat(regexp(hdr{20},'True|False','match'))); 
+        
     elseif new == true
         Fs = str2double(cell2mat(regexp(hdr{14},' .+','match')));
         ADChan = str2double(cell2mat(regexp(hdr{20},' .+','match')));
@@ -56,6 +58,17 @@ if strcmp( class( hdr ), 'cell' )
         filter.low = str2double(cell2mat(regexp(hdr{25},' .+','match')));
         filter.high = str2double(cell2mat(regexp(hdr{29},' .+','match')));
         inpRange = str2double(cell2mat(regexp(hdr{21},' .+','match')));
+        inpInverted = lower(cell2mat(regexp(hdr{20},'True|False','match')));
+        dspDelEnable = lower( cell2mat( regexp( hdr{ 32 }, 'Disabled|Enabled', 'match' ) ) );
+        switch dspDelEnable
+            case 'disabled'
+                dspDelay = str2double( cell2mat( regexp( hdr{ 33 },...
+                    ' .+', 'match' ) ) );
+                
+            case 'enabled'
+                dspDelay = 0;
+                
+        end
         
     else
         error('Problem with header version. Check manually')
@@ -65,4 +78,5 @@ if strcmp( class( hdr ), 'cell' )
 else
     error('hdr must be a MATLAB cell data class')
 end
+
     

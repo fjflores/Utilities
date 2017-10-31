@@ -1,47 +1,102 @@
-function intTs = interpts( ts, Fs, rel )
-
+function intTs = interpts( ts, Fs, rel, method, buffSize )
 % INTERPTS interpolates the timestamps output from DevilLynx
 %
-% USAGE:
+% Usage:
 % intTs = interpts( ts, Fs, rel )
 %
-% INPUT:    Ts:     Original timestamps vector.
-%           Fs:     Sampling frequency.
-%           rel:    boolean flag, if true it will substract the first timestamp from
-%                   all the others, so it will start from zero. Default = 0
+% Input:
+% ts:     Original timestamps vector.
+% Fs:     Sampling frequency.
+% rel:    boolean flag, if true it will substract the first timestamp from
+%         all the others, so it will start from zero. Default = false.
 %
-% OUTPUT:   intTs: Interpolated timestamps.
-%
-% (C) Francisco J. Flores 2010-May-12
+% Output:
+% intTs: Interpolated timestamps.
 
 
 % check user input
 if nargin == 2
     rel = false;
+    method = 'simple';
+    buffSize = 512; % This is default.
+    
+elseif nargin == 3
+    method = 'simple';
+    buffSize = 512;
+    
+elseif nargin == 4
+    buffSize = 512;
     
 end
 
-% generat interpolated timestamps by using vectorization.
-firstTs = ts( 1 ); % save first TS to relativize with respect to it
-dTs = diff( ts( 1 : 2 ) ); % get interval between record TS.
-sampleInterval = 1 / Fs;
+% Save first ts to relativize with respect to it.
+firstTs = ts( 1 );
 
-% check that timestamps are not already interpolated.
-if sampleInterval >= dTs
-    error( 'Timestamps might be already interpolated' )
-    
-% else, procedd with with interpolation.
-else
-    interpSpace = linspace( 0, dTs - sampleInterval, 512 )'; % generate a matrix of 512 x nTs equally spaced points
-    tBase = repmat( interpSpace, 1, length( ts ) ); % create base matrix with time intervals
-    tsMatrix = repmat( ts, 512, 1 ); % generate ts reapeated matrix.
-    intTs = tBase + tsMatrix; % sum base timestamps with real TS's.
-    intTs = intTs( : );
-    clear ts
-    
-    if rel == true
-        intTs = intTs - firstTs; % linearizes treal matrix and substract first TS to get relative time
+% Get actual ts length based on buffer size.
+nTs = length( ts ) * buffSize;
+
+switch method
+    case 'simple'
+        % Assumes there wer not discontinuities during recording.
+        intTs = linspace( firstTs, firstTs + nTs, nTs );
         
-    end
+    case 'interp'
+        % Perform an interpolation based on nlynx saved timestamps. There
+        % might be discontinuities.
+        warning(...
+            { 'Using Interpolation method.',...
+            'Check for possible discontinuites' } )
+        
+        % Get sample interval, and convert to microseconds.
+        sampInterv = ( buffSize / Fs ) * 1e6;
+        
+        % Check if nlynx timestamps have discontinuities.
+        dTs = diff( ts );
+        accel = round( diff( dTs ) );
+        if any( accel )
+            warning( { ' Ts vector does not increases monotonically.',...
+                ' Using loop.' } )
+            % Allocate matrix with zeros
+            tsMat = zeros( length( ts ), buffSize );
+            nRecs = length( ts );
+            
+            for recIdx = 1 : nRecs
+                if recIdx < nRecs
+                    % deal with all records but the last one.
+                    tmpFirstTs = ts( recIdx );
+                    tmpLastTs = ts( recIdx ) + sampInterv;
+                    tsMat( recIdx, : ) = linspace(...
+                        tmpFirstTs, tmpLastTs, buffSize );
+                    
+                else
+                    % Deals with the last record.
+                    tmpFirstTs = ts( recIdx );
+                    tmpLastTs = ts( recIdx ) + sampInterv;
+                    tsMat( recIdx, : ) = linspace(...
+                        tmpFirstTs, tmpLastTs, buffSize );
+                    
+                end
+                
+            end
+            intTs = tsMat( : );
+            
+        else
+            disp(...
+                { ' Ts vector increases monotonically.',...
+                ' Using vectorization.' } )
+            lastTs = ts( end ) + ( sampInterv * buffSize );
+            intTs = firstTs : sampInterv : lastTs;
+            
+        end
+        
+    otherwise
+        error( 'Timestamp Interpolation method not defined' )
+        
+end
+
+% Start at t = zero if desired.
+if rel
+    intTs = intTs - firstTs;
     
 end
+
