@@ -21,7 +21,7 @@ tStart = round( epochStart * 1e6 );
 tEnd = round( epochLength .* 1e6 ) + tStart;
 
 % Check that firs time point is less or equal than startTime
-if tStart < tInt( 1 );
+if tStart < tInt( 1 )
     error( 'Epoch start time is lesser than the first timestamp' )
     
 elseif tEnd > tInt( end )
@@ -41,31 +41,5 @@ else
     idx( rightTail( 1 ) : leftTail( end ) ) = true;
     
 end
-
-
-
-    
-
-
-% deal with rounding problems derived from non-integer sampling rates
-% Fs = 1 / abs( mean( diff( ts ) ) );
-
-% round Fs to the second decimal.
-% Fs = ( round( Fs * 100 ) ./ 100 );
-
-% and now get dt
-% dt = 1 ./ Fs;
-% dt = tInt( 2 ) - tInt( 1 );
-% offset = ts( 1 );
-% % firstTime = ( epochStart - offset + 1 ) / dt;
-% 
-% if firstTime < 0.5
-%     idxStart = ceil( firstTime );
-%     
-% else
-%     idxStart = round( firstTime );
-%     
-% end
-% nPoints = round( epochLength / dt );
     
 
