@@ -41,5 +41,3 @@ else
     idx( rightTail( 1 ) : leftTail( end ) ) = true;
     
 end
-    
-
