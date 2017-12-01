@@ -9,7 +9,7 @@ function disprog( i, n, steps )
 %	Example:
 %	 N=16; for i=1:N, disprog(i,N,5); end;
 
-global start
+persistent start
 
 if i == 1
     start = tic;
@@ -18,7 +18,7 @@ end
 
 if i == n
     fprintf( ' 100%% complete in %.2f seconds.\n', toc( start ) );
-    clear begin_time_disprog;
+    clear start;
     
 elseif floor( i * steps / n ) ~= floor( ( i - 1 ) * steps / n )
     fprintf(' %g%%', floor( i * steps / n ) * ceil( 100 / steps ) );
