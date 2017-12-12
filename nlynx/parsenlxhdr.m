@@ -1,5 +1,4 @@
-function [ Fs, ADChan, time, filter, inpRange, convFactor,...
-    inpInverted, dspDelay ] = parsenlxhdr( hdr )
+function info = parsenlxhdr( hdr, ext )
 
 % PARSENLXHDR(HDR) parses old and new neuralynx header files.
 
@@ -33,40 +32,42 @@ if strcmp( class( hdr ), 'cell' )
     end
         
     if old == true
-        Fs = str2double( cell2mat( regexp( hdr{ 13 }, ' .+', 'match' ) ) );
-        ADChan = str2double( cell2mat( regexp( hdr{ 18 }, ' .+', 'match') ) );
+        info.Fs = str2double(...
+            cell2mat( regexp( hdr{ 13 }, ' .+', 'match' ) ) );
+        info.ADChan = str2double(...
+            cell2mat( regexp( hdr{ 18 }, ' .+', 'match') ) );
         idxDate = cell2mat( regexp( hdr{ 3 }, '(..)/(..)/(.{4})', 'tokenExtents' ) );
-        date = [ hdr{ 3 } ( idxDate( 3, 1 ) : idxDate( 3, 2 ) )...
+        info.date = [ hdr{ 3 } ( idxDate( 3, 1 ) : idxDate( 3, 2 ) )...
             '-' hdr{ 3 }( idxDate( 1, : ) ) '-' hdr{3}(idxDate(2,:))];
-        time.open = regexp(hdr{3},'( ..):(.+):(.+)','match');
-        convFactor = str2double(cell2mat(regexp(hdr{15},' .+','match')));
-        time.close = regexp(hdr{4},'( ..):(.+):(.+)','match');
-        filter.low = str2double(cell2mat(regexp(hdr{21},' .+','match')));
-        filter.high = str2double(cell2mat(regexp(hdr{25},' .+','match')));
-        inpRange = str2double(cell2mat(regexp(hdr{19},' .+','match')));
-        inpInverted = lower(cell2mat(regexp(hdr{20},'True|False','match'))); 
+        info.timeOpen = regexp(hdr{3},'( ..):(.+):(.+)','match');
+        info.convFactor = str2double(cell2mat(regexp(hdr{15},' .+','match')));
+        info.timeClose = regexp(hdr{4},'( ..):(.+):(.+)','match');
+        info.filterLow = str2double(cell2mat(regexp(hdr{21},' .+','match')));
+        info.filterHigh = str2double(cell2mat(regexp(hdr{25},' .+','match')));
+        info.inpRange = str2double(cell2mat(regexp(hdr{19},' .+','match')));
+        info.inpInverted = lower(cell2mat(regexp(hdr{20},'True|False','match'))); 
         
     elseif new == true
-        Fs = str2double(cell2mat(regexp(hdr{14},' .+','match')));
-        ADChan = str2double(cell2mat(regexp(hdr{20},' .+','match')));
+        info.Fs = str2double(cell2mat(regexp(hdr{14},' .+','match')));
+        info.ADChan = str2double(cell2mat(regexp(hdr{20},' .+','match')));
 %         idxDate = cell2mat(regexp(hdr{3},'(..)/(..)/(.{4})','tokenExtents'));
 %         date = [hdr{3}(idxDate(3,1):idxDate(3,2)) '-' hdr{3}(idxDate(1,:)) '-' hdr{3}(idxDate(2,:))];
-        time.open = regexp(hdr{3},'( ..):(.+):(.+)','match');
-        time.close = regexp(hdr{4},'( ..):(.+):(.+)','match');
-        convFactor = str2double(cell2mat(regexp(hdr{16},' .+','match')));
-        inpInverted = lower(cell2mat(regexp(hdr{22},'True|False','match')));
-        filter.low = str2double(cell2mat(regexp(hdr{25},' .+','match')));
-        filter.high = str2double(cell2mat(regexp(hdr{29},' .+','match')));
-        inpRange = str2double(cell2mat(regexp(hdr{21},' .+','match')));
-        inpInverted = lower(cell2mat(regexp(hdr{20},'True|False','match')));
-        dspDelEnable = lower( cell2mat( regexp( hdr{ 32 }, 'Disabled|Enabled', 'match' ) ) );
+        info.timeOpen = regexp(hdr{3},'( ..):(.+):(.+)','match');
+        info.timeClose = regexp(hdr{4},'( ..):(.+):(.+)','match');
+        info.convFactor = str2double(cell2mat(regexp(hdr{16},' .+','match')));
+        info.inpInverted = lower(cell2mat(regexp(hdr{22},'True|False','match')));
+        info.filterLow = str2double(cell2mat(regexp(hdr{25},' .+','match')));
+        info.filterHigh = str2double(cell2mat(regexp(hdr{29},' .+','match')));
+        info.inpRange = str2double(cell2mat(regexp(hdr{21},' .+','match')));
+        info.inpInverted = lower(cell2mat(regexp(hdr{20},'True|False','match')));
+        info.dspDelEnable = lower( cell2mat( regexp( hdr{ 32 }, 'Disabled|Enabled', 'match' ) ) );
         switch dspDelEnable
             case 'disabled'
-                dspDelay = str2double( cell2mat( regexp( hdr{ 33 },...
+                info.dspDelay = str2double( cell2mat( regexp( hdr{ 33 },...
                     ' .+', 'match' ) ) );
                 
             case 'enabled'
-                dspDelay = 0;
+                info.dspDelay = 0;
                 
         end
         
