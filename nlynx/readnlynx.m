@@ -48,6 +48,7 @@ switch ext
     case '.ntt'
         % read tetrode file
         
+        
     case '.nse'
         % Read single electrode file
         parm4 = 1;
