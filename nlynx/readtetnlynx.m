@@ -48,7 +48,7 @@ end
 % get header info.
 hdr = Nlx2MatSpike( fileName, [ 0 0 0 0 0 ], 1, 3, 1 );
 
-info = parsehdrnlynx( hdr );
+hdrInfo = parsehdrnlynx( hdr );
 nBuff = Nlx2MatCSC( fileName, [ 0 0 0 1 0 ], 0, 1, [ ] );
 % Check if any record is incomplete, by checking buffer length.
 buffCheck = any( diff( nBuff ) );
