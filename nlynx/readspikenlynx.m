@@ -35,30 +35,26 @@ assert( strcmp( ext, '.nse' ), 'Not a single electrode nlynx file.' );
 
 if nargin < 2
     epoch = [ ];
-    dec = 1;
-    
-elseif nargin < 3
-    dec = 1;
     
 end
 
 % get header info.
 hdr = Nlx2MatSpike( fileName, [ 0 0 0 0 0 ], 1, 3, 1 );
 
-hdrInfo = parsehdrnlynx( hdr );
+hdrInfo = parsehdrnlynx( hdr, ext );
 
 if isempty( epoch )
     parm4 = 1; % extract all data
     data = Nlx2MatSpike( fileName, [ 0 0 0 0 1 ], 0, parm4, [ ] );
     convFactor = hdrInfo.convFactor;
-    tempData = data( : ) * convFactor * 1e6; % convert AD units to microvolts
+    tempData = data * convFactor * 1e6; % convert AD units to microvolts
     ts = Nlx2MatSpike( fileName, [ 1 0 0 0 0 ], 0, parm4, [ ] );
     
 else
     parm4 = 4; % extract only given records
     data = Nlx2MatSpike( fileName, [ 0 0 0 0 1 ], 0, parm4, epoch );
     convFactor = hdrInfo.convFactor;
-    tempData = data( : ) * convFactor * 1e6; % convert AD units to microvolts
+    tempData = data * convFactor * 1e6; % convert AD units to microvolts
     ts = Nlx2MatSpike( fileName, [ 1 0 0 0 0 ], 0, parm4, epoch );
     
 end
@@ -70,7 +66,7 @@ nlynx = struct(...
     'fileName', fileName,...
     'infoHdr', hdrInfo,...
     'PhysUnits', 'uV', ...
-    'data', data, ...
+    'data', tempData, ...
     'ts', ts )
 
 disp('Done!')
