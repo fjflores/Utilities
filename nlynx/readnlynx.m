@@ -40,7 +40,7 @@ epoch = epoch * 1e6;
 [~, ~, ext] = fileparts( fileName );
 switch ext
     case '.ncs'
-        nlynx = readlfpnlx( fileName, epoch, dec );
+        nlynx = readlfpnlynx( fileName, epoch, dec );
         
     case '.nst'
         % read stereotrode file

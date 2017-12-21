@@ -1,18 +1,16 @@
-function hdrInfo = parsenlxhdr( hdr )
-
+function hdrInfo = parsehdrnlynx( hdr, ext )
 % PARSENLXHDR(HDR) parses old and new neuralynx header files.
-
+% 
 % Ussage:
 % [Fs,ADChan,date,time,filter,inpRange] = parsenlxhdr(hdr)
 % 
 % Input:
-%   hdr:    cell array containing the header from a CSC neuralynx file.
+% hdr: cell array containing the header from a CSC neuralynx file.
+% ext: File extension of header.
 % 
 % Output:
-%   Fs:     Sampling frequency, in Hz.
-%   ADChan: channel number in cheetah.
-% 
-% (C) 2012 Francisco J. Flores
+% hdrInfo: Structure with the most important header information.
+
 
 if strcmp( class( hdr ), 'cell' )
     
@@ -107,6 +105,12 @@ if strcmp( class( hdr ), 'cell' )
                 hdrInfo.dspDelay = 0;
                 
         end
+        
+        switch ext
+            case '.nse'
+                % something should happen.
+        end
+        
         
     else
         error('Problem with header version. Check manually')
