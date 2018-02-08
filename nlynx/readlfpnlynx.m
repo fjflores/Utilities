@@ -79,9 +79,9 @@ if ~buffCheck
     if dec > 1
         disp( ' Decimating data...' )
         tempData = decimate( tempData, dec, 'fir' );
-        Fs = hdrInfo.Fs ./ dec;
         
     end
+    Fs = hdrInfo.Fs ./ dec;
     
     % invert data if recorded with positive upwards.
     if strcmp( hdrInfo.inpInverted, 'true' )
