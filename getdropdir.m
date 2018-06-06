@@ -1,4 +1,4 @@
-dropDir = getdropdir( )
+function dropDir = getdropdir( )
 % GETDROPDIR returns the root Dropbox directory.
 % 
 % Usage:
