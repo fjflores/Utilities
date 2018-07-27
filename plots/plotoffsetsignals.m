@@ -1,4 +1,4 @@
-function [ off2plot, hPlot ] = plotoffsetsignals( sigMat, offset, t )
+function [ off2plot, hPlot ] = plotoffsetsignals( sigMat, offset, t, col )
 % PLOTOFFSETSIGNALS spaces the signals withing the same axes.
 % 
 % Usage
@@ -23,13 +23,19 @@ elseif nargin < 2
     offset = max( max( sigMat ) ) / 2;
     [ m, n ] = size( sigMat );
     t = 1 : m;
+    col = 'k';
     
 elseif nargin < 3
     [ m, n ] = size( sigMat );
     t = 1 : m;
+    col = 'k';
+    
+elseif nargin < 4
+    [ m, n ] = size( sigMat );
+    col = 'k';
     
 else
-    [ m, n ] = size( sigMat );
+    col = 'k';
 
 end
     
@@ -37,7 +43,7 @@ end
 for sigCnt = 1 : n
     off2plot( sigCnt ) = - ( offset * ( sigCnt - 1 ) );
     hPlot( sigCnt ) = plot(...
-        t, sigMat( :, sigCnt ) + off2plot( sigCnt ), 'color', 'k' );
+        t, sigMat( :, sigCnt ) + off2plot( sigCnt ), 'color', col );
     hold on
     
 end
