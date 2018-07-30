@@ -2,12 +2,11 @@ function [ off2plot, hPlot ] = plotoffsetsignals( sigMat, offset, t, col )
 % PLOTOFFSETSIGNALS spaces the signals withing the same axes.
 % 
 % Usage
-% plotoffsetsignals( t, sigMat )
+% plotoffsetsignals( sigMat, offset, t, col )
 % 
 % Input:
 % sigMat:   matrix with signals to plot, in column format.
-% t:        timestamps vector. Optional. If not supplied, will uses
-% indices.
+% t:        timestamps vector. Optional. If not supplied, will use indices.
 % offset: separation between signals. If not supplied, half maximum value 
 % will be used.  
 % 
@@ -41,11 +40,14 @@ end
     
 % make plot
 for sigCnt = 1 : n
-    off2plot( sigCnt ) = - ( offset * ( sigCnt - 1 ) );
+    off2plot( sigCnt ) = offset * ( sigCnt - 1 );
     hPlot( sigCnt ) = plot(...
         t, sigMat( :, sigCnt ) + off2plot( sigCnt ), 'color', col );
     hold on
     
 end
+yTicks = 1 : n;
+tickPos = off2plot + ( offset ./ 2 );
+set( gca, 'YTick', tickPos, 'YTickLabel', yTicks );
 axis tight
 hold off
