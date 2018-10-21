@@ -1,18 +1,18 @@
-function events = readnlynxnev
+function events = readevnlynx( evPath )
 
-% read nlynx events file and place it into a dataset object
+% READEVNLYNX read nlynx events file and place it into a dataset object
 
 % Input:
-% This function needs no input. it assumes that Nlynx events are all named
-% "Events.nev".
+% fPath = path to events file.
 % 
 % Output:
 %   events = dataset object containing Timestamp in seconds, event ID, TTL
 %   to which the event was commited, and string describing the event.
 
-% (c) 2011 Francisco J. Flores
+% (c) 2011 Francisco J. Flo
 
-[t,ids,ttl,type] = Nlx2MatEV( 'Events.nev', [ 1 1 1 0 1 ], 0, 1, [ ] );
+f2read = fullfile( evPath, 'Events.nev' );
+[t,ids,ttl,type] = Nlx2MatEV( f2read, [ 1 1 1 0 1 ], 0, 1, [ ] );
 t = t' ./ 1e6;
 ids = ids'; 
 ttl = ttl';
