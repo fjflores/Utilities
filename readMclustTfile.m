@@ -17,7 +17,7 @@ function [timestamp, numSpikes] = readMclustTfile(sFilePath)
     error('There should be exactly 1 input argument.');
   elseif (nargout ~= 2)
     error('There should be exactly 2 output arguments.');
-  end;
+  end
 
   % Open for binary read access     
   iClusterFileID = fopen(sFilePath, 'r', 'b');
@@ -25,7 +25,7 @@ function [timestamp, numSpikes] = readMclustTfile(sFilePath)
   % Throw an error if there is a problem reading the file.
   if (iClusterFileID == -1)
     error(['Error opening cluster file:' sFilePath]);
-  end;
+  end
       
   % Find the end of the header.
   fseek(iClusterFileID, 0, 'bof');
@@ -54,12 +54,12 @@ function [timestamp, numSpikes] = readMclustTfile(sFilePath)
   delta = diff(timestamp);
   if (min(delta) < 0)
     error(['Spike timestamps in video file must be non-decreasing. ' sFilePath]);
-  end;
+  end
   
   % Give a warning if the cell has no spikes.
   if (numSpikes == 0)
     warning(['There are no spikes in the cluster file:' sFilePath]);
-  end;
+  end
   
   % Free memory.
   delta = [];
