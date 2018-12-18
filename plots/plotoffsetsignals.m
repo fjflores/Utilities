@@ -6,10 +6,10 @@ function [ off2plot, hPlot ] = plotoffsetsignals( sigMat, offset, t, chLab, col 
 % 
 % Input:
 %  sigMat: matrix with signals to plot, in column format.
-%  t: timestamps vector. Optional. If not supplied, will use indices.
 %  offset: separation between signals. If not supplied, half maximum value 
+%  t: timestamps vector. Optional. If not supplied, will use indices.
 %  will be used.
-%  chLab: 
+%  chLab: cell array of strings with channel labels. 
 %  col: color to plot channels.
 % 
 % Output:
