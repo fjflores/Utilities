@@ -18,6 +18,9 @@ function hCbar = ffcbar( hFig, hAx, yLab )
 % 
 % Output:
 % hCbar: handle to colorbar.
+% 
+% Shortcomnings:
+% Orientation is limited to 'EastOutside'.
 
 % Check user input.
 if nargin == 0
@@ -56,9 +59,13 @@ end
 set( hFig, 'Units', 'Normalized' );
 set( hAx, 'Units', 'Normalized' );
 axPos = hAx.Position;
+left = axPos( 1 );
+bott = axPos( 2 );
+w = axPos( 3 );
+h = axPos( 4 );
 
 % Create colorbar at those positions.
-cBarPos = [ 0.9111 axPos( 2 ) 0.0084 axPos( 4 ) ];
+cBarPos = [ left + w + 0.01 bott 0.0084 h ];
 hCbar = colorbar( 'Units', 'Normalized', 'Position', cBarPos );
 
 if flagLabel
