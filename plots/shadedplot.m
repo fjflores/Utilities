@@ -1,7 +1,5 @@
-function  [ha hb hc] = shadedplot(x, y1, y2, varargin)
-
- 
-% SHADEDPLOT draws two lines on a plot and shades the area between those
+function  [ ha, hb, hc ] = shadedplot(x, y1, y2, varargin)
+% SHADEDPLOT shades the area between two lines
 % lines.
 %
 % SHADEDPLOT(x, y1, y2)
@@ -62,6 +60,12 @@ switch length( varargin )
         set( ha( 2 ), 'FaceColor', varargin{ 1 })
         set( hb, 'Color', varargin{ 2 } )
         set( hc, 'Color', varargin{ 2 } )
+        
+    case 3
+        set( ha( 2 ), 'FaceColor', varargin{ 1 })
+        set( hb, 'Color', varargin{ 2 } )
+        set( hc, 'Color', varargin{ 2 } )
+        set( ha( 2 ), 'FaceAlpha', varargin{ 3 } )
         
     otherwise
         
