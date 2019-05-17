@@ -10,33 +10,50 @@ function plotmultispec( specMat, rows, cols, kind )
 [ m, n, z ] = size( specMat );
 
 nPlots = rows * cols;
-specs2plot = sort( randsample( z, nPlots ) );
+specsIdx = sort( randsample( z, nPlots ) );
 
+% Define standardization fx.
 switch kind
     case 'spec'
         stdFx = @pow2db;
+        barLab = 'power (db)';
         
     case 'coher'
         stdFx = @atanh;
+        barLab = 'z-coherence (au)';
         
     otherwise
         warning( 'No transformation.' )
         stdFx = @( x ) 1 * x;
+        barLab = 'N/A';
         
 end
     
-% map = flipud( brewermap( 256, 'RdYlBu' ) );
+specs2plot = stdFx( specMat( :, :, specsIdx ) );
+clear specMat
+cLim = prctile( specs2plot( : ), [ 5 99 ] );
+
 for plotIdx = 1 : nPlots
     subplot( rows, cols, plotIdx )
-    thisSpec =  stdFx( squeeze( specMat( :, :, specs2plot( plotIdx ) ) ) );
+    thisSpec =  squeeze( specs2plot( :, :, plotIdx ) );
     imagesc( thisSpec' )
     axis xy
     axis off
-%     colormap( map )
+    caxis( cLim );
+    colormap( viridis )
     
     ylim = get( gca, 'ylim' );
     xlim = get( gca, 'xlim' );
-    msg = sprintf( '%u', specs2plot( plotIdx ) );
-    text( xlim( 1 ), ylim( 2 ), msg )
+    
+    posX = xlim( 1 ) + xlim( 2 ) * 0.025;
+    posY = ylim( 2 ) - ylim( 2 ) * 0.1;
+    
+    msg = sprintf( '%u', specsIdx( plotIdx ) );
+    text( posX, posY, msg, 'Color', 'w', 'FontWeight', 'bold' )
+    
+    if plotIdx == nPlots
+        ffcbar( gcf, gca, barLab );
+        
+    end
 
 end
