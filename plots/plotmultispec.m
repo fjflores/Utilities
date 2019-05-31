@@ -1,16 +1,31 @@
-function plotmultispec( specMat, rows, cols, kind )
+function plotmultispec( specMat, rows, cols, kind, specsIdx )
 % PLOTMULTISPEC makes a figure with multiple spectra/coherence.
-% 
+%
 % Usage:
 % plotmultispec( specMat, rows, cols, kind )
-% 
+%
 % Input:
-% 
+% specMat: tensor with freqs x times x trials/events.
+% rows: number of rows to plot.
+% cols: number of columsn to plot.
+% kind: defines the data transformation.
+% specIdx: indices of specs to plot. Length must be equal to rows x cols.
+%
+% Output:
+% figure with spectrograms or coheregrams.
 
-[ m, n, z ] = size( specMat );
+if exist( 'specsIdx', 'var' ) ~= 1
+    disp(...
+        sprintf( 'No idx provided.\n Plotting %u random plots.', nPlots ) )
+    [ ~, ~, z ] = size( specMat );
+    specsIdx = sort( randsample( z, nPlots ) );
+    
+end
 
+% Check input correcteness.
 nPlots = rows * cols;
-specsIdx = sort( randsample( z, nPlots ) );
+nIdx = length( specsIdx );
+assert( nIdx <= nPlots )
 
 % Define standardization fx.
 switch kind
@@ -28,12 +43,12 @@ switch kind
         barLab = 'N/A';
         
 end
-    
+
 specs2plot = stdFx( specMat( :, :, specsIdx ) );
 clear specMat
 cLim = prctile( specs2plot( : ), [ 5 99 ] );
 
-for plotIdx = 1 : nPlots
+for plotIdx = 1 : nIdx
     subplot( rows, cols, plotIdx )
     thisSpec =  squeeze( specs2plot( :, :, plotIdx ) );
     imagesc( thisSpec' )
@@ -55,5 +70,5 @@ for plotIdx = 1 : nPlots
         ffcbar( gcf, gca, barLab );
         
     end
-
+    
 end
