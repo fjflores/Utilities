@@ -1,4 +1,4 @@
-function plothypno(sleepStage,epoch,plotType)
+function plothypno( sleepStage, epoch, plotType )
 %PLOTHYPNO plots a hypnogram using the output of IMPORTHYPNO
 % PLOTHYPNO(SLEEPSTAGE,EPOCH,PLOTTYPE)
 % plot hypnogram with thicker horizontal lines, and gray, thin vertical
@@ -22,18 +22,18 @@ end
 hypno = sleepStage.hypno;
 states = sleepStage.states;
 t = sleepStage.t;
-bin = round(t(2)-t(1));
+bin = round( t( 2 ) - t ( 1 ) );
 
 % if epoch exist, then cut the data
-if ~isempty(epoch)
-    idx = t>=epoch(1) & t<=epoch(2);
-    hypno = hypno(idx);
-    states = states(idx,:);
-    t = t(idx);
+if ~isempty( epoch )
+    idx = t >= epoch( 1 ) & t <= epoch( 2 );
+    hypno = hypno( idx );
+    states = states( idx, : );
+    t = t( idx );
 end
 
 % inform what bin size is being used
-disp(['Using ' num2str(bin) ' secs bin size'])
+disp(['Using ' num2str( bin ) ' secs bin size'])
 
 % plot hypnogram as a colored strip
 if strcmpi(plotType,'strip')
@@ -41,9 +41,8 @@ if strcmpi(plotType,'strip')
     load hypColor
     colormap(hypColor)
     set(gca,...
-        'yticklabel',{},...
-        'fontname','times new roman')
-    pbaspect([10 1 1])
+        'yticklabel',{} )
+    pbaspect( [ 10 1 1 ] )
     box off
     
 elseif strcmpi(plotType,'stair')
@@ -72,8 +71,7 @@ elseif strcmpi(plotType,'stair')
 %     xlabel('Time (secs)')
     set(gca,...
         'ytick',[1 2 3],...
-        'yticklabel',{'WAKE'; 'NREM'; 'REM'},...
-        'fontname','times new roman')
+        'yticklabel',{'WAKE'; 'NREM'; 'REM'} )
 %     pbaspect([3 1 1])
 %     set(gcf,'color','w')
     box off
