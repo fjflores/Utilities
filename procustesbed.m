@@ -2,7 +2,8 @@ function cutSig = procustesbed( signal, nTotal )
 %PROCUSTESBED cuts a signal if long, and pads with nan's if short.
 %
 % Usage:
-% shortSig = procustesbed( signal, ntotal )
+% shortSig = procustesbed( signal, ntotal ) cuts a signal to a length of 
+% nTotal if longer, or pads the signal with NaN's to nTotal if shorter.
 %
 % Input:
 % signal: column vector with signal to cut.
