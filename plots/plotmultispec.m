@@ -14,6 +14,8 @@ function plotmultispec( specMat, rows, cols, kind, specsIdx )
 % Output:
 % figure with spectrograms or coheregrams.
 
+% Check input correcteness.
+nPlots = rows * cols;
 if exist( 'specsIdx', 'var' ) ~= 1
     disp(...
         sprintf( 'No idx provided.\n Plotting %u random plots.', nPlots ) )
@@ -21,9 +23,6 @@ if exist( 'specsIdx', 'var' ) ~= 1
     specsIdx = sort( randsample( z, nPlots ) );
     
 end
-
-% Check input correcteness.
-nPlots = rows * cols;
 nIdx = length( specsIdx );
 assert( nIdx <= nPlots )
 
@@ -55,7 +54,7 @@ for plotIdx = 1 : nIdx
     axis xy
     axis off
     caxis( cLim );
-    colormap( viridis )
+    colormap( magma )
     
     ylim = get( gca, 'ylim' );
     xlim = get( gca, 'xlim' );
@@ -72,3 +71,4 @@ for plotIdx = 1 : nIdx
     end
     
 end
+
