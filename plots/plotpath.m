@@ -35,7 +35,7 @@ colMap = brewermap( 9, 'Pastel1' );
 % end
 
 dt = sTimes( 2 ) - sTimes( 1 );
-numstates = max( statePath );
+numstates = +max( statePath );
 time = zeros( 4, length( sTimes ) );
 time( 1, : ) = sTimes;
 time( 2, : ) = sTimes;
