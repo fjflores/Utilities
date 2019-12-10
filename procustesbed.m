@@ -1,4 +1,4 @@
-function cutSig = procustesbed( signal, nTotal )
+function adjSig = procustesbed( signal, nTotal, modo )
 %PROCUSTESBED cuts a signal if long, and pads with nan's if short.
 %
 % Usage:
@@ -8,23 +8,33 @@ function cutSig = procustesbed( signal, nTotal )
 % Input:
 % signal: column vector with signal to cut.
 % nTotal: Total length, in samples, of the desired signal.
+% modo: if signal is shorter, pad with NaNs if "nan" or with 0's if "zero";
 %
 % Output:
 % cutSig: longer or shorter signal.
 
 if length( signal ) < nTotal
     deltaLength = nTotal - length( signal );
-    seg = nan( deltaLength, 1 );
+    switch modo
+        case 'nan'
+            disp( 'Adding nan''s.' )
+            seg = nan( deltaLength, 1 );
+    
+        case 'zero'
+            disp( 'Adding zeros.' )
+            seg = zeros( deltaLength, 1 );
+            
+    end
     signal = [ signal; seg ];
-    cutSig = signal;
+    adjSig = signal;
     
 elseif length( signal ) > nTotal
     deltaLength = length( signal ) - nTotal;
     signal( end - deltaLength + 1 : end ) = [ ];
-    cutSig  = signal;
+    adjSig  = signal;
     
 else
-    cutSig = signal;
+    adjSig = signal;
     return
     
 end
