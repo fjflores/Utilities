@@ -24,6 +24,9 @@ if length( signal ) < nTotal
             disp( 'Adding zeros.' )
             seg = zeros( deltaLength, 1 );
             
+        otherwise
+            error( 'Unknown paddign mode' )
+            
     end
     signal = [ signal; seg ];
     adjSig = signal;
