@@ -21,7 +21,7 @@ while n + 199 <= numel( y )
 %        'xdata', newt )
    drawnow;
    n = n + 1;
-%    pause( 0.1 )
+   pause( 0.01 )
 end
 
 %% PLots spectrogram as oscillsocpoe
