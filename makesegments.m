@@ -41,7 +41,9 @@ nStep = round( movingWin( 2 ) * Fs ); % number of samples to step through
 winStart = 1 : nStep : N - nWin + 1;
 nSegments = length( winStart );
 
-for thisSegment = 1 : nSegments;
+lenSeg = length( winStart( 1 ) : winStart( 1 ) + nWin - 1 );
+segments = nan( lenSeg, nSegments );
+for thisSegment = 1 : nSegments
    idxSegments = winStart( thisSegment ) : winStart( thisSegment ) + nWin - 1;
    segments( :, thisSegment ) = signal( idxSegments );
    
