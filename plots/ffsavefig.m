@@ -1,4 +1,4 @@
-function ffsavefig( hFig, folder, figName, ext )
+function ffsavefig( hFig, dir, figName, ext )
 % FFSAVEFIG saves a png the figure to a specified directory.
 %
 % Usage:
@@ -19,15 +19,15 @@ function ffsavefig( hFig, folder, figName, ext )
 set( hFig, 'PaperPositionMode', 'auto' )
 
 % If folder does not exist, create it.
-fig2save = strcat( fullfile( folder, figName ), [ '.' ext ] );
-folderFlag = exist( folder, 'dir' );
+fig2save = strcat( fullfile( dir, figName ), [ '.' ext ] );
+folderFlag = exist( dir, 'dir' );
 
 if folderFlag ~= 7
     msg1 = sprintf( 'Requested directory did not exist. Creating...\n' );
-    msg2 = sprintf( '%s\n', folder );
+    msg2 = sprintf( '%s\n', dir );
     disp( msg1 )
     disp( pad( msg1, 'left' ) )
-    mkdir( folder )
+    mkdir( dir )
     
 else
     msg1 = sprintf( 'Requested directory already exists.\n' );
@@ -35,17 +35,22 @@ else
 
 end
 
-msg1 = sprintf( 'Printing figure %s in %s format...\n', figName, ext );
+msg1 = sprintf( 'Printing figure %s in %s format...', figName, ext );
 disp( pad( msg1, 'left' ) )
 switch ext
     case 'png'
         print( hFig, fig2save, '-dpng', '-r300' )
         
     case 'eps'
+        set( hFig, 'Renderer', 'Painters' )
         print( hFig, fig2save, '-depsc2' )
         
+    case 'fig'
+        savefig( hFig, fig2save )
+        
     otherwise
-        error( 'Invalid figure extension.' )
+        error(...
+            'Invalid figure extension. Has to be either fig, png, or eps.' )
         
 end
 fprintf( 'Done.\n' )
