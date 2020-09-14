@@ -16,7 +16,7 @@ function cleanData = ffrmlinesc( data, Fs, detr )
 % Input:
 % data: 1-D vector with electrophysiological data.
 % Fs: sampling frequency.
-% detr: boolean flag. If true, then detrend epochs.
+% detr: boolean flag. If true, then detrend epochs. Defalut: false.
 % 
 % Output:
 % cleanData: data with 60 Hz removed.
@@ -46,8 +46,8 @@ if detr == true
       dataMat = detrend( dataMat );
 end
 
-f0 = 60; % frequency to remove.
-cleanData = rmlinesc( dataMat, params, 0.05, 'n', f0 );
+f0 = [ 60 120 180 ]; % frequency to remove.
+cleanData = rmlinesc( dataMat, params, 0.01, 'n', f0 );
 cleanData = cleanData( : );
 
 
