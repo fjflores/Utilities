@@ -33,8 +33,10 @@ function nlynx = readlfpnlynx( fileName, epoch, dec )
 % Nlx2MatCSC.m and mex files.
 
 % Check user input.
-[ ~, ~, ext ] = fileparts( fileName );
-assert( strcmp( ext, '.ncs' ), 'Not continuously sampled nlynx file.' );
+[ ~, fN, ext ] = fileparts( fileName );
+assert( strcmp( ext, '.ncs' ), 'Enter filename with .ncs extension.' );
+
+assert( exist( fileName, 'file' ) == 2, [ 'File ' fN ext ' does not exist' ] )
 
 if nargin < 2
     epoch = [ ];
@@ -49,7 +51,15 @@ end
 hdr = Nlx2MatCSC( fileName, [ 0 0 0 0 0 ], 1, 3, 1 );
 hdrInfo = parsehdrnlynx( hdr, ext );
 
-nBuff = Nlx2MatCSC( fileName, [ 0 0 0 1 0 ], 0, 1, [ ] );
+% If first call to Nlx2Mat fails, check file viability.
+try
+    nBuff = Nlx2MatCSC( fileName, [ 0 0 0 1 0 ], 0, 1, [ ] );
+
+catch
+    error( 'It is likely that the ncs file is empty.' )
+    
+end
+
 % Check if any record is incomplete, by checking buffer length.
 buffCheck = any( diff( nBuff ) );
 
