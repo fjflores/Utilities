@@ -61,9 +61,9 @@ catch
 end
 
 % Check if any record is incomplete, by checking buffer length.
-buffCheck = any( diff( nBuff ) );
+unequalRecs = any( diff( nBuff ) );
 
-if ~buffCheck
+if unequalRecs == false
     disp('All records are complete. Extracting data')
     buffLength = nBuff( 1 );
     sprintf( 'Buffer length: %g', buffLength );
