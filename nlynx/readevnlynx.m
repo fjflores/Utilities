@@ -12,10 +12,16 @@ function events = readevnlynx( evPath )
 % (c) 2011 Francisco J. Flo
 
 f2read = fullfile( evPath, 'Events.nev' );
-[t,ids,ttl,type] = Nlx2MatEV( f2read, [ 1 1 1 0 1 ], 0, 1, [ ] );
-t = t' ./ 1e6;
-ids = ids'; 
+[tRaw,ids,ttl,type] = Nlx2MatEV( f2read, [ 1 1 1 0 1 ], 0, 1, [ ] );
+% tRaw = tRaw' ./ 1e6;
+
+f2read = fullfile( evPath, 'CSC1.ncs' );
+tempTs = Nlx2MatCSC( f2read, [ 1 0 0 0 0 ], 0, 1, [ ] );
+firstTs = tempTs( 1 );
+
+t = ( tRaw - firstTs );
+ids = ids';
 ttl = ttl';
 idx = 1 : numel( t );
-events = table( idx', t, ids, ttl, type,...
+events = table( idx', t', ids, ttl, type,...
     'VariableNames',{ 'idx', 'TimeStamp', 'EventID', 'TTL', 'String' } );
