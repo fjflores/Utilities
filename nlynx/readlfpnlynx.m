@@ -49,7 +49,7 @@ end
 
 % get header info.
 hdr = Nlx2MatCSC( fileName, [ 0 0 0 0 0 ], 1, 3, 1 );
-hdrInfo = parsehdrnlynx( hdr, ext );
+infoHdr = parsehdrnlynx( hdr, ext );
 
 % If first call to Nlx2Mat fails, check file viability.
 try
@@ -71,17 +71,15 @@ if unequalRecs == false
     if isempty( epoch )
         parm4 = 1; % extract all data
         data = Nlx2MatCSC( fileName, [ 0 0 0 0 1 ], 0, parm4, [ ] );
-        conv = hdrInfo.convFactor;
+        conv = infoHdr.convFactor;
         tempData = data( : ) * conv * 1e6; % convert AD units to microvolts
         dummyTs = Nlx2MatCSC( fileName, [ 1 0 0 0 0 ], 0, parm4, [ ] );
-        firstTs = dummyTs( 1 );
         
     else
         parm4 = 4; % extract only given records
         data = Nlx2MatCSC( fileName, [ 0 0 0 0 1 ], 0, parm4, epoch );
         tempData = data( : ) * convFactor * 1e6; % convert AD units to microvolts
         dummyTs = Nlx2MatCSC( fileName, [ 1 0 0 0 0 ], 0, parm4, epoch );
-        firstTs = dummyTs( 1 );
         
     end
     
@@ -91,10 +89,10 @@ if unequalRecs == false
         tempData = decimate( tempData, dec, 'fir' );
         
     end
-    Fs = hdrInfo.Fs ./ dec;
+    Fs = infoHdr.Fs ./ dec;
     
     % invert data if recorded with positive upwards.
-    if strcmp( hdrInfo.inpInverted, 'true' )
+    if strcmp( infoHdr.inpInverted, 'true' )
         disp( ' Data converted to positive downwards.' )
         data = tempData * -1;
         
@@ -113,19 +111,16 @@ else
 end
 
 % Create timestamps in seconds.
-ts = linspace(...
-    0,...
-    ( length( data ) ./ Fs ) - ( 1 / Fs ),...
-    length( data ) );
+tStamp = interpts( dummyTs );
 
 % Change dsp delay to seconds.
-hdrInfo.dspDelay = hdrInfo.dspDelay ./ 1e6;
+infoHdr.dspDelay = infoHdr.dspDelay ./ 1e6;
 
 nlynx = struct(...
-    'fileName', fileName,...
-    'infoHdr', hdrInfo,...
+    'FileName', fileName,...
+    'InfoHdr', infoHdr,...
     'PhysUnits', 'uV', ...
-    'data', data, ...
-    'ts', ts );
+    'Data', data, ...
+    'tStamp', tStamp );
 
 disp('Done!')
