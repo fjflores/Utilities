@@ -1,27 +1,29 @@
 function events = readevnlynx( evPath )
-
-% READEVNLYNX read nlynx events file and place it into a dataset object
-
+% READEVNLYNX read nlynx events file to a table.
+% 
 % Input:
-% fPath = path to events file.
+%   fPath: path to events file.
 % 
 % Output:
-%   events = dataset object containing Timestamp in seconds, event ID, TTL
-%   to which the event was commited, and string describing the event.
+%   events: table with columns:
+%       idx: event index number
+%       TimeStamp: in microseconds
+%       eventID: XXX 
+%       TTL: TTL port logical state
+%       Type: string describing the event
+% 
 
-% (c) 2011 Francisco J. Flo
+% Copyright:
+% 2011 Francisco J. Flores
 
 f2read = fullfile( evPath, 'Events.nev' );
 [tRaw,ids,ttl,type] = Nlx2MatEV( f2read, [ 1 1 1 0 1 ], 0, 1, [ ] );
-% tRaw = tRaw' ./ 1e6;
 
-f2read = fullfile( evPath, 'CSC1.ncs' );
-tempTs = Nlx2MatCSC( f2read, [ 1 0 0 0 0 ], 0, 1, [ ] );
-firstTs = tempTs( 1 );
-
-t = ( tRaw - firstTs );
+warning( 'on', 'backtrace' )
+warning( 'Timestamps are in microseconds.' )
+tRaw = tRaw';
 ids = ids';
 ttl = ttl';
-idx = 1 : numel( t );
-events = table( idx', t', ids, ttl, type,...
-    'VariableNames',{ 'idx', 'TimeStamp', 'EventID', 'TTL', 'String' } );
+idx = ( 1 : numel( tRaw ) )';
+events = table( idx, tRaw, ids, ttl, type,...
+    'VariableNames',{ 'idx', 'TimeStamp', 'EventID', 'TTL', 'Type' } );
