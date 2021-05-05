@@ -19,7 +19,6 @@ function events = readevnlynx( evPath )
 f2read = fullfile( evPath, 'Events.nev' );
 [tRaw,ids,ttl,type] = Nlx2MatEV( f2read, [ 1 1 1 0 1 ], 0, 1, [ ] );
 
-warning( 'on', 'backtrace' )
 warning( 'Timestamps are in microseconds.' )
 tRaw = tRaw';
 ids = ids';
