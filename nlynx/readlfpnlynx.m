@@ -49,7 +49,7 @@ end
 
 % get header info.
 hdr = Nlx2MatCSC( fileName, [ 0 0 0 0 0 ], 1, 3, 1 );
-infoHdr = parsehdrnlynx( hdr, ext );
+InfoHdr = parsehdrnlynx( hdr, ext );
 
 % If first call to Nlx2Mat fails, check file viability.
 try
@@ -71,7 +71,7 @@ if unequalRecs == false
     if isempty( epoch )
         parm4 = 1; % extract all data
         data = Nlx2MatCSC( fileName, [ 0 0 0 0 1 ], 0, parm4, [ ] );
-        conv = infoHdr.convFactor;
+        conv = InfoHdr.convFactor;
         tempData = data( : ) * conv * 1e6; % convert AD units to microvolts
         dummyTs = Nlx2MatCSC( fileName, [ 1 0 0 0 0 ], 0, parm4, [ ] );
         
@@ -89,10 +89,10 @@ if unequalRecs == false
         tempData = decimate( tempData, dec, 'fir' );
         
     end
-    Fs = infoHdr.Fs ./ dec;
+    Fs = InfoHdr.Fs ./ dec;
     
     % invert data if recorded with positive upwards.
-    if strcmp( infoHdr.inpInverted, 'true' )
+    if strcmp( InfoHdr.inpInverted, 'true' )
         disp( ' Data converted to positive downwards.' )
         data = tempData * -1;
         
@@ -114,11 +114,11 @@ end
 tStamp = interpts( dummyTs );
 
 % Change dsp delay to seconds.
-infoHdr.dspDelay = infoHdr.dspDelay ./ 1e6;
+InfoHdr.dspDelay = InfoHdr.dspDelay ./ 1e6;
 
 nlynx = struct(...
     'FileName', fileName,...
-    'InfoHdr', infoHdr,...
+    'InfoHdr', InfoHdr,...
     'PhysUnits', 'uV', ...
     'Data', data, ...
     'tStamp', tStamp );
