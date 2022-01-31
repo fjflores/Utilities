@@ -56,15 +56,18 @@ try
     nBuff = Nlx2MatCSC( fileName, [ 0 0 0 1 0 ], 0, 1, [ ] );
 
 catch
-    error( 'It is likely that the ncs file is empty.' )
+    msg = sprintf( 'It is likely that %s.%s is empty.', fN, ext );
+    error( msg ) 
     
 end
+msg = sprintf( 'Reading %s%s channel...', fN, ext );
+disp( msg )
 
 % Check if any record is incomplete, by checking buffer length.
 unequalRecs = any( diff( nBuff ) );
 
 if unequalRecs == false
-    disp('All records are complete. Extracting data')
+    disp( 'All records are complete. Extracting data' )
     buffLength = nBuff( 1 );
     sprintf( 'Buffer length: %g', buffLength );
     
@@ -124,3 +127,4 @@ nlynx = struct(...
     'tStamp', tStamp );
 
 disp('Done!')
+disp( ' ' )
