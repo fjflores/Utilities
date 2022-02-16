@@ -1,4 +1,4 @@
-function nlynx = readlfpnlynx( fileName, epoch, dec )
+function lfp = readlfpnlynx( fileName, epoch, dec )
 % READNLYNX reads neuralynx continuously sampled channels.
 %
 % Syntax:
@@ -56,7 +56,7 @@ try
     nBuff = Nlx2MatCSC( fileName, [ 0 0 0 1 0 ], 0, 1, [ ] );
 
 catch
-    error( 'It is likely that the ncs file is empty.' )
+    error( 'It is likely that %s is empty.', fN )
     
 end
 
@@ -116,7 +116,7 @@ tStamp = interpts( dummyTs );
 % Change dsp delay to seconds.
 InfoHdr.dspDelay = InfoHdr.dspDelay ./ 1e6;
 
-nlynx = struct(...
+lfp = struct(...
     'FileName', fileName,...
     'InfoHdr', InfoHdr,...
     'PhysUnits', 'uV', ...
