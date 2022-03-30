@@ -42,7 +42,7 @@ if style == 1
     hdrInfo.ADChan = str2double(...
         cell2mat( regexp( hdr{ 18 }, ' .+', 'match') ) );
     
-    hdrInfo.date = cell2mat(...
+    hdrInfo.day = cell2mat(...
         regexp(...
         hdr{ 3 }, '(?<month>\d+)/(?<day>\d+)/(?<year>\d+)', 'match' ) );
     
@@ -67,13 +67,7 @@ if style == 1
         cell2mat( regexp( hdr{ 20 }, 'True|False', 'match' ) ) );
     
 elseif style == 2
-    hdrInfo.Fs = str2double(...
-        cell2mat( regexp( hdr{ 14 },' .+','match' ) ) );
-    
-    hdrInfo.ADChan = str2double(...
-        cell2mat( regexp( hdr{ 20 }, ' .+','match' ) ) );
-    
-    hdrInfo.date = cell2mat(...
+    hdrInfo.day = cell2mat(...
         regexp(...
         hdr{ 3 }, '(?<month>\d+)/(?<day>\d+)/(?<year>\d+)', 'match' ) );
     
@@ -81,8 +75,14 @@ elseif style == 2
     
     hdrInfo.timeClose = regexp( hdr{ 4 }, '( ..):(.+):(.+)', 'match' );
     
+    hdrInfo.Fs = str2double(...
+        cell2mat( regexp( hdr{ 14 },' .+','match' ) ) );
+    
     hdrInfo.convFactor = str2double(...
         cell2mat( regexp( hdr{ 16 }, ' .+', 'match' ) ) );
+    
+    hdrInfo.ADChan = str2double(...
+        cell2mat( regexp( hdr{ 20 }, ' .+','match' ) ) );
     
     hdrInfo.inpInverted = lower(...
         cell2mat( regexp( hdr{ 22 }, 'True|False', 'match' ) )) ;
@@ -114,10 +114,45 @@ elseif style == 2
     
 elseif style == 3
     timeOpen = regexp( hdr{ 8 }, '(\d+):(\d+):(\d+)', 'match' );
+    day = regexp( hdr{ 8 }, '(\d+)\/(\d+)\/(\d+)', 'match' );
     timeClose = regexp( hdr{ 9 }, '(\d+):(\d+):(\d+)', 'match' );
+    Fs = regexp( hdr{ 15 },'(\d+)','match' );
+    convFactor = regexp( hdr{ 16 }, ' .+', 'match' );
+    ADChan = regexp( hdr{ 20 }, ' .+','match' );
+    inpInverted = regexp( hdr{ 22 }, 'True|False', 'match' );
     
+%     hdrInfo.filterLow = str2double(...
+%         cell2mat( regexp( hdr{ 25 }, ' .+', 'match' ) ) );
+%     
+%     hdrInfo.filterHigh = str2double(...
+%         cell2mat( regexp( hdr{ 29 }, ' .+', 'match' ) ) );
+%     
+%     hdrInfo.inpRange = str2double(...
+%         cell2mat( regexp( hdr{ 21 }, ' .+', 'match' ) ) );
+%     
+%     hdrInfo.inpInverted = lower(...
+%         cell2mat( regexp( hdr{ 20 }, 'True|False', 'match' ) ) );
+%     
+%     hdrInfo.dspDelEnable = lower(...
+%         cell2mat( regexp( hdr{ 32 }, 'Disabled|Enabled', 'match' ) ) );
+%     
+%     switch hdrInfo.dspDelEnable
+%         case 'disabled'
+%             hdrInfo.dspDelay = str2double(...
+%                 cell2mat( regexp( hdr{ 33 }, ' .+', 'match' ) ) );
+%             
+%         case 'enabled'
+%             hdrInfo.dspDelay = 0;
+%             
+%     end
+    
+    hdrInfo.day = day{ 1 };
     hdrInfo.timeOpen = timeOpen{ 1 };
     hdrInfo.timeClose = timeClose{ 1 };
+    hdrInfo.Fs = str2double( Fs{ 1 } );
+    hdrInfo.convFactor = str2double( convFactor{ 1 } );
+    hdrInfo.ADChan = str2double( ADChan{ 1 } );
+    hdrInfo.inpInverted = lower( inpInverted{ 1 } );
     
 else
     error('Problem with header version. Check manually')
