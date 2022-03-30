@@ -119,19 +119,10 @@ elseif style == 3
     Fs = regexp( hdr{ 15 },'(\d+)','match' );
     convFactor = regexp( hdr{ 16 }, ' .+', 'match' );
     ADChan = regexp( hdr{ 20 }, ' .+','match' );
-    inpInverted = regexp( hdr{ 22 }, 'True|False', 'match' );
-    
-%     hdrInfo.filterLow = str2double(...
-%         cell2mat( regexp( hdr{ 25 }, ' .+', 'match' ) ) );
-%     
-%     hdrInfo.filterHigh = str2double(...
-%         cell2mat( regexp( hdr{ 29 }, ' .+', 'match' ) ) );
-%     
-%     hdrInfo.inpRange = str2double(...
-%         cell2mat( regexp( hdr{ 21 }, ' .+', 'match' ) ) );
-%     
-%     hdrInfo.inpInverted = lower(...
-%         cell2mat( regexp( hdr{ 20 }, 'True|False', 'match' ) ) );
+    lowCut = regexp( hdr{ 25 }, ' .+', 'match' );
+    highCut = regexp( hdr{ 29 }, ' .+', 'match' );
+    inputRange = regexp( hdr{ 21 }, ' .+', 'match' );
+    inverted = regexp( hdr{ 22 }, 'True|False', 'match' );
 %     
 %     hdrInfo.dspDelEnable = lower(...
 %         cell2mat( regexp( hdr{ 32 }, 'Disabled|Enabled', 'match' ) ) );
@@ -152,7 +143,10 @@ elseif style == 3
     hdrInfo.Fs = str2double( Fs{ 1 } );
     hdrInfo.convFactor = str2double( convFactor{ 1 } );
     hdrInfo.ADChan = str2double( ADChan{ 1 } );
-    hdrInfo.inpInverted = lower( inpInverted{ 1 } );
+    hdrInfo.inverted = lower( inverted{ 1 } );
+    hdrInfo.lowCut = str2double( lowCut{ 1 } );
+    hdrInfo.highCut = str2double( highCut{ 1 } );
+    hdrInfo.inputRange = str2double( inputRange{ 1 } );
     
 else
     error('Problem with header version. Check manually')
