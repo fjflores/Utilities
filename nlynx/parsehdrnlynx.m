@@ -117,13 +117,13 @@ elseif style == 3
     day = regexp( hdr{ 8 }, '(\d+)\/(\d+)\/(\d+)', 'match' );
     timeClose = regexp( hdr{ 9 }, '(\d+):(\d+):(\d+)', 'match' );
     Fs = regexp( hdr{ 15 },'(\d+)','match' );
-    convFactor = regexp( hdr{ 16 }, ' .+', 'match' );
+    convFactor = regexp( hdr{ 17 }, ' .+', 'match' );
     ADChan = regexp( hdr{ 20 }, ' .+','match' );
     lowCut = regexp( hdr{ 25 }, ' .+', 'match' );
     highCut = regexp( hdr{ 29 }, ' .+', 'match' );
     inputRange = regexp( hdr{ 21 }, ' .+', 'match' );
     inverted = regexp( hdr{ 22 }, 'True|False', 'match' );
-%     
+    
 %     hdrInfo.dspDelEnable = lower(...
 %         cell2mat( regexp( hdr{ 32 }, 'Disabled|Enabled', 'match' ) ) );
 %     
