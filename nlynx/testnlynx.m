@@ -40,15 +40,15 @@ ADChan = 23;
 assert( abs( hdrInfo.ADChan - ADChan ) < eps )
 
 %% Test inverted input is boolean
-% load( 'TestData\testHdr' )
-% hdrInfo = parsehdrnlynx( hdr );
-% assert( islogical( hdrInfo.inverted ) )
-% 
-% %% Test inverted input is true
-% load( 'TestData\testHdr' )
-% hdrInfo = parsehdrnlynx( hdr );
-% inverted = false;
-% assert( hdrInfo.inverted == inverted )
+load( 'TestData\testHdr' )
+hdrInfo = parsehdrnlynx( hdr );
+assert( islogical( hdrInfo.inverted ) )
+
+%% Test inverted input is true
+load( 'TestData\testHdr' )
+hdrInfo = parsehdrnlynx( hdr );
+inverted = false;
+assert( hdrInfo.inverted == inverted )
 
 
 
