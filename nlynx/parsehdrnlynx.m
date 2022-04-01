@@ -123,19 +123,8 @@ elseif style == 3
     highCut = regexp( hdr{ 29 }, ' .+', 'match' );
     inputRange = regexp( hdr{ 21 }, ' .+', 'match' );
     inverted = regexp( hdr{ 22 }, 'True|False', 'match' );
-    
-%     hdrInfo.dspDelEnable = lower(...
-%         cell2mat( regexp( hdr{ 32 }, 'Disabled|Enabled', 'match' ) ) );
-%     
-%     switch hdrInfo.dspDelEnable
-%         case 'disabled'
-%             hdrInfo.dspDelay = str2double(...
-%                 cell2mat( regexp( hdr{ 33 }, ' .+', 'match' ) ) );
-%             
-%         case 'enabled'
-%             hdrInfo.dspDelay = 0;
-%             
-%     end
+    delayEnabled = regexp( hdr{ 32 }, 'Disabled|Enabled', 'match' );
+    delay = regexp( hdr{ 33 }, ' .+', 'match' );
     
     hdrInfo.day = day{ 1 };
     hdrInfo.timeOpen = timeOpen{ 1 };
@@ -147,6 +136,8 @@ elseif style == 3
     hdrInfo.lowCut = str2double( lowCut{ 1 } );
     hdrInfo.highCut = str2double( highCut{ 1 } );
     hdrInfo.inputRange = str2double( inputRange{ 1 } );
+    hdrInfo.delayEnabled = strcmpi( delayEnabled{ 1 }, 'Enabled' );
+    hdrInfo.delay = str2double( delay{ 1 } );
     
 else
     error('Problem with header version. Check manually')

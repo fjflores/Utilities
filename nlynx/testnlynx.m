@@ -39,16 +39,23 @@ hdrInfo = parsehdrnlynx( hdr );
 ADChan = 23;
 assert( abs( hdrInfo.ADChan - ADChan ) < eps )
 
-%% Test inverted input is boolean
+%% Test inverted input
+% Inverted input ios false.
 load( 'TestData\testHdr' )
 hdrInfo = parsehdrnlynx( hdr );
-assert( islogical( hdrInfo.inverted ) )
+assert( islogical( hdrInfo.inverted ) && ~hdrInfo.inverted )
 
-%% Test inverted input is true
+%% Test enabling of DSP delay 
 load( 'TestData\testHdr' )
 hdrInfo = parsehdrnlynx( hdr );
-inverted = false;
-assert( hdrInfo.inverted == inverted )
+assert( islogical( hdrInfo.delayEnabled ) && hdrInfo.delayEnabled )
+
+%% Test DSP delay value
+load( 'TestData\testHdr' )
+hdrInfo = parsehdrnlynx( hdr );
+delay = 1969;
+assert( abs( hdrInfo.delay - delay ) < eps )
+
 
 
 
