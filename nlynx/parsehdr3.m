@@ -1,5 +1,5 @@
 function hdrInfo = parsehdr3( hdr )
-%% PARSEHDR3 gets the relevant info from Cheetah 5.7 hdr.
+% PARSEHDR3 gets the relevant info from Cheetah 5.7 hdr.
 % 
 % Usage:
 % hdrInfo = parsehdr3( hdr )
@@ -16,8 +16,8 @@ timeClose = regexp( hdr{ 9 }, '(\d+):(\d+):(\d+)', 'match' );
 Fs = regexp( hdr{ 15 },'(\d+)','match' );
 convFactor = regexp( hdr{ 17 }, '(\d+\.\d+)', 'match' );
 ADChan = regexp( hdr{ 20 }, '(\d+)','match' );
-lowCut = regexp( hdr{ 25 }, '(\d+)', 'match' );
-highCut = regexp( hdr{ 29 }, '(\d+)', 'match' );
+lowCut = regexp( hdr{ 25 }, '(\d*\.?\d+)', 'match' );
+highCut = regexp( hdr{ 29 }, '(\d*\.?\d+)', 'match' );
 inputRange = regexp( hdr{ 21 }, '(\d+)', 'match' );
 inverted = regexp( hdr{ 22 }, 'True|False', 'match' );
 delayEnabled = regexp( hdr{ 32 }, 'Disabled|Enabled', 'match' );
