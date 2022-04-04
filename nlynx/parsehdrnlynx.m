@@ -67,7 +67,7 @@ if style == 1
         cell2mat( regexp( hdr{ 20 }, 'True|False', 'match' ) ) );
     
 elseif style == 2
-    
+    hdrInfo = parsehdr2( hdr );
     
 elseif style == 3
     hdrInfo = parsehdr3( hdr );
