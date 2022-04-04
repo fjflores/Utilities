@@ -33,6 +33,12 @@ hdrInfo = parsehdrnlynx( hdr );
 convFactor = 0.000000061035156250000001;
 assert( abs( hdrInfo.convFactor - convFactor ) < eps )
 
+%% Test AD name
+load( 'TestData\testHdr3' )
+hdrInfo = parsehdrnlynx( hdr );
+ADName = 'CSC25';
+assert( strcmp( hdrInfo.ADName, ADName ) );
+
 %% Test AD channel
 load( 'TestData\testHdr3' )
 hdrInfo = parsehdrnlynx( hdr );
