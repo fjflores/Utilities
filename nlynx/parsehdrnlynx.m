@@ -67,50 +67,7 @@ if style == 1
         cell2mat( regexp( hdr{ 20 }, 'True|False', 'match' ) ) );
     
 elseif style == 2
-    hdrInfo.day = cell2mat(...
-        regexp(...
-        hdr{ 3 }, '(?<month>\d+)/(?<day>\d+)/(?<year>\d+)', 'match' ) );
     
-    hdrInfo.timeOpen = regexp( hdr{ 3 }, '( ..):(.+):(.+)', 'match' );
-    
-    hdrInfo.timeClose = regexp( hdr{ 4 }, '( ..):(.+):(.+)', 'match' );
-    
-    hdrInfo.Fs = str2double(...
-        cell2mat( regexp( hdr{ 14 },' .+','match' ) ) );
-    
-    hdrInfo.convFactor = str2double(...
-        cell2mat( regexp( hdr{ 16 }, ' .+', 'match' ) ) );
-    
-    hdrInfo.ADChan = str2double(...
-        cell2mat( regexp( hdr{ 20 }, ' .+','match' ) ) );
-    
-    hdrInfo.inpInverted = lower(...
-        cell2mat( regexp( hdr{ 22 }, 'True|False', 'match' ) )) ;
-    
-    hdrInfo.filterLow = str2double(...
-        cell2mat( regexp( hdr{ 25 }, ' .+', 'match' ) ) );
-    
-    hdrInfo.filterHigh = str2double(...
-        cell2mat( regexp( hdr{ 29 }, ' .+', 'match' ) ) );
-    
-    hdrInfo.inpRange = str2double(...
-        cell2mat( regexp( hdr{ 21 }, ' .+', 'match' ) ) );
-    
-    hdrInfo.inpInverted = lower(...
-        cell2mat( regexp( hdr{ 20 }, 'True|False', 'match' ) ) );
-    
-    hdrInfo.dspDelEnable = lower(...
-        cell2mat( regexp( hdr{ 32 }, 'Disabled|Enabled', 'match' ) ) );
-    
-    switch hdrInfo.dspDelEnable
-        case 'disabled'
-            hdrInfo.dspDelay = str2double(...
-                cell2mat( regexp( hdr{ 33 }, ' .+', 'match' ) ) );
-            
-        case 'enabled'
-            hdrInfo.dspDelay = 0;
-            
-    end
     
 elseif style == 3
     hdrInfo = parsehdr3( hdr );
