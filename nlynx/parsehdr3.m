@@ -10,19 +10,18 @@ function hdrInfo = parsehdr3( hdr )
 % Output:
 % hdrInfo: structure with all relevant header info.
 
-
-timeOpen = regexp( hdr{ 8 }, '(\d+):(\d+):(\d+)', 'match' );
 day = regexp( hdr{ 8 }, '(\d+)\/(\d+)\/(\d+)', 'match' );
+timeOpen = regexp( hdr{ 8 }, '(\d+):(\d+):(\d+)', 'match' );
 timeClose = regexp( hdr{ 9 }, '(\d+):(\d+):(\d+)', 'match' );
 Fs = regexp( hdr{ 15 },'(\d+)','match' );
-convFactor = regexp( hdr{ 17 }, ' .+', 'match' );
-ADChan = regexp( hdr{ 20 }, ' .+','match' );
-lowCut = regexp( hdr{ 25 }, ' .+', 'match' );
-highCut = regexp( hdr{ 29 }, ' .+', 'match' );
-inputRange = regexp( hdr{ 21 }, ' .+', 'match' );
+convFactor = regexp( hdr{ 17 }, '(\d+\.\d+)', 'match' );
+ADChan = regexp( hdr{ 20 }, '(\d+)','match' );
+lowCut = regexp( hdr{ 25 }, '(\d+)', 'match' );
+highCut = regexp( hdr{ 29 }, '(\d+)', 'match' );
+inputRange = regexp( hdr{ 21 }, '(\d+)', 'match' );
 inverted = regexp( hdr{ 22 }, 'True|False', 'match' );
 delayEnabled = regexp( hdr{ 32 }, 'Disabled|Enabled', 'match' );
-delay = regexp( hdr{ 33 }, ' .+', 'match' );
+delay = regexp( hdr{ 33 }, '(\d+)', 'match' );
 
 hdrInfo.day = day{ 1 };
 hdrInfo.timeOpen = timeOpen{ 1 };
