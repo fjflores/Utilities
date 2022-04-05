@@ -1,4 +1,4 @@
-function hdrInfo = parsehdrnlynx( hdr, ext )
+function hdrInfo = parsehdrnlynx( hdr )
 % PARSENLXHDR(HDR) parses old and new neuralynx header files.
 %
 % Ussage:
@@ -19,57 +19,15 @@ end
 
 % Check header style
 if ~isempty( regexp( hdr{ 5 }, '-Cheetah', 'match' ) )
-    style = 1;
-    disp('Old header style')
+    disp( 'Cheetah 5.4 header style' )
+    hdrInfo = parsehdr1( hdr );
     
 elseif ~isempty( regexp( hdr{ 10 }, '-Cheetah', 'match' ) )
-    style = 2;
-    disp('Cheetah 5.6 header style')
-    
-elseif ~isempty( regexp( hdr{ 12 }, 'Cheetah', 'match' ) )
-    style = 3;
-    disp('Cheetah 5.7 header style')
-    
-else
-    error('Problem with header version. Check manually')
-    
-end
-
-if style == 1
-    hdrInfo.Fs = str2double(...
-        cell2mat( regexp( hdr{ 13 }, ' .+', 'match' ) ) );
-    
-    hdrInfo.ADChan = str2double(...
-        cell2mat( regexp( hdr{ 18 }, ' .+', 'match') ) );
-    
-    hdrInfo.day = cell2mat(...
-        regexp(...
-        hdr{ 3 }, '(?<month>\d+)/(?<day>\d+)/(?<year>\d+)', 'match' ) );
-    
-    hdrInfo.timeOpen = regexp( hdr{ 3 }, '( ..):(.+):(.+)', 'match' );
-    
-    hdrInfo.convFactor = str2double(...
-        cell2mat( regexp( hdr{ 15 }, ' .+', 'match' ) ) );
-    
-    hdrInfo.timeClose = regexp(...
-        hdr{ 4 }, '( ..):(.+):(.+)', 'match' );
-    
-    hdrInfo.filterLow = str2double(...
-        cell2mat( regexp( hdr{ 21 }, ' .+', 'match' ) ) );
-    
-    hdrInfo.filterHigh = str2double(...
-        cell2mat( regexp( hdr{ 25 }, ' .+', 'match' ) ) );
-    
-    hdrInfo.inpRange = str2double(...
-        cell2mat( regexp( hdr{ 19 }, ' .+', 'match' ) ) );
-    
-    hdrInfo.inpInverted = lower(...
-        cell2mat( regexp( hdr{ 20 }, 'True|False', 'match' ) ) );
-    
-elseif style == 2
+    disp( 'Cheetah 5.6 header style' )
     hdrInfo = parsehdr2( hdr );
     
-elseif style == 3
+elseif ~isempty( regexp( hdr{ 12 }, 'Cheetah', 'match' ) )
+    disp( 'Cheetah 5.7 header style' )
     hdrInfo = parsehdr3( hdr );
     
 else
