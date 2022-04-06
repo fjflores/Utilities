@@ -2,11 +2,10 @@ function hdrInfo = parsehdrnlynx( hdr )
 % PARSENLXHDR(HDR) parses old and new neuralynx header files.
 %
 % Ussage:
-% [Fs,ADChan,date,time,filter,inpRange] = parsenlxhdr(hdr)
+% hdrInfo = parsenlxhdr(hdr)
 %
 % Input:
 % hdr: cell array containing the header from a CSC neuralynx file.
-% ext: File extension of header.
 %
 % Output:
 % hdrInfo: Structure with the most important header information.
@@ -19,15 +18,15 @@ end
 
 % Check header style
 if ~isempty( regexp( hdr{ 5 }, '-Cheetah', 'match' ) )
-    disp( 'Cheetah 5.4 header style' )
+    disp( 'Parsing Cheetah 5.4 header style' )
     hdrInfo = parsehdr1( hdr );
     
 elseif ~isempty( regexp( hdr{ 10 }, '-Cheetah', 'match' ) )
-    disp( 'Cheetah 5.6 header style' )
+    disp( 'Parsing Cheetah 5.6 header style' )
     hdrInfo = parsehdr2( hdr );
     
 elseif ~isempty( regexp( hdr{ 12 }, 'Cheetah', 'match' ) )
-    disp( 'Cheetah 5.7 header style' )
+    disp( 'Parsing Cheetah 5.7 header style' )
     hdrInfo = parsehdr3( hdr );
     
 else
