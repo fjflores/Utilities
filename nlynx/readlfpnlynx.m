@@ -48,8 +48,8 @@ elseif nargin < 3
 end
 
 % get header info.
-hdr = Nlx2MatCSC( fileName, [ 0 0 0 0 0 ], 1, 3, 1 );
-InfoHdr = parsehdrnlynx( hdr, ext );
+hdr = getrawhdr( fileName );
+infoHdr = parsehdrnlynx( hdr );
 
 % If first call to Nlx2Mat fails, check file viability.
 try
@@ -59,8 +59,7 @@ catch
     error( 'It is likely that %s is empty.', fN )
     
 end
-msg = sprintf( 'Reading %s%s channel...', fN, ext );
-disp( msg )
+fprintf( 'Reading %s%s channel...', fN, ext );
 
 % Check if any record is incomplete, by checking buffer length.
 unequalRecs = any( diff( nBuff ) );
@@ -73,7 +72,7 @@ if unequalRecs == false
     if isempty( epoch )
         parm4 = 1; % extract all data
         data = Nlx2MatCSC( fileName, [ 0 0 0 0 1 ], 0, parm4, [ ] );
-        conv = InfoHdr.convFactor;
+        conv = infoHdr.convFactor;
         tempData = data( : ) * conv * 1e6; % convert AD units to microvolts
         dummyTs = Nlx2MatCSC( fileName, [ 1 0 0 0 0 ], 0, parm4, [ ] );
         
@@ -91,10 +90,10 @@ if unequalRecs == false
         tempData = decimate( tempData, dec, 'fir' );
         
     end
-    Fs = InfoHdr.Fs ./ dec;
+    Fs = infoHdr.Fs ./ dec;
     
     % invert data if recorded with positive upwards.
-    if strcmp( InfoHdr.inpInverted, 'true' )
+    if strcmp( infoHdr.inpInverted, 'true' )
         disp( ' Data converted to positive downwards.' )
         data = tempData * -1;
         
@@ -116,11 +115,11 @@ end
 tStamp = interpts( dummyTs );
 
 % Change dsp delay to seconds.
-InfoHdr.dspDelay = InfoHdr.dspDelay ./ 1e6;
+infoHdr.dspDelay = infoHdr.dspDelay ./ 1e6;
 
 lfp = struct(...
     'FileName', fileName,...
-    'InfoHdr', InfoHdr,...
+    'InfoHdr', infoHdr,...
     'PhysUnits', 'uV', ...
     'Data', data, ...
     'tStamp', tStamp );
