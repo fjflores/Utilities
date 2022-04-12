@@ -1,4 +1,4 @@
-function tStamp = interpts( rawTs, buffSize )
+function tStamp = interpts( rawTs, buff )
 % INTERPTS interpolates the timestamps output from NeuraLynx
 %
 % Usage:
@@ -13,14 +13,25 @@ function tStamp = interpts( rawTs, buffSize )
 % tStamp: Interpolated timestamps.
 
 % check user input
-if nargin == 1
-    buffSize = 512; % This is default.
+% if nargin == 1
+%     buff = 512; % This is default.
+%     
+% end
+
+% check that input length matches
+nRecs = numel( buff );
+try
+    assert( isequal( numel( rawTs ), nRecs ) )
+    
+catch
+    error( 'Number of elements must match' )
     
 end
 
-% Interpolate
-nRecs = numel( rawTs );
-tsMat = nan( buffSize, nRecs );
+% Interpolate and accumualte timestamps
+% tStamp = nan( 1, sum( buff ) );
+tStamp = [];
+% tsMat = nan( buff, nRecs );
 for idxRec = 1 : nRecs
     test = ( idxRec + 1 ) <= nRecs;
     if test
@@ -31,11 +42,12 @@ for idxRec = 1 : nRecs
         
     end
     
-    thisStep = round( recDur / buffSize );
-    thisOff = linspace( 0, recDur - thisStep, buffSize );
+    thisStep = round( recDur / buff( idxRec ) );
+    thisOff = linspace( 0, recDur - thisStep, buff( idxRec ) );
     thisVec = round( rawTs( idxRec ) + thisOff );
-    tsMat( :, idxRec ) = thisVec;
+%     tsMat( :, idxRec ) = thisVec;
+    tStamp = cat( 2, tStamp, thisVec );
     
 end
 
-tStamp = tsMat( : );
+% tStamp = tsMat( : );
