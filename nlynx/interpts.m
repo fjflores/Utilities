@@ -5,18 +5,12 @@ function tStamp = interpts( rawTs, buff )
 %   intTs = interpts( rawTs, buffSize )
 %
 % Input:
-%   rawTs: Original timestamps vector.
-%   buffSize: Size of record (buffer). Typically 512 (default).
-%
+% rawTs: Original timestamps vector.
+% buff: If single value, size of buffer. If > 1 value, number of valid 
+%       samples per record.
 %
 % Output:
 % tStamp: Interpolated timestamps.
-
-% check user input
-% if nargin == 1
-%     buff = 512; % This is default.
-%
-% end
 
 % check that input length matches
 nRecs = numel( buff );
@@ -35,10 +29,8 @@ else
     
 end
 
-% Interpolate and accumualte timestamps
-% tStamp = nan( 1, sum( buff ) );
+% Interpolate and accumulate timestamps
 tStamp = [];
-% tsMat = nan( buff, nRecs );
 for idxRec = 1 : nRecs
     test = ( idxRec + 1 ) <= nRecs;
     if test
@@ -52,9 +44,6 @@ for idxRec = 1 : nRecs
     thisStep = round( recDur / buff( idxRec ) );
     thisOff = linspace( 0, recDur - thisStep, buff( idxRec ) );
     thisVec = round( rawTs( idxRec ) + thisOff );
-    %     tsMat( :, idxRec ) = thisVec;
     tStamp = cat( 2, tStamp, thisVec );
     
 end
-
-% tStamp = tsMat( : );
