@@ -7,7 +7,7 @@ function tStamp = interpts( rawTs, buff )
 % Input:
 %   rawTs: Original timestamps vector.
 %   buffSize: Size of record (buffer). Typically 512 (default).
-% 
+%
 %
 % Output:
 % tStamp: Interpolated timestamps.
@@ -15,16 +15,23 @@ function tStamp = interpts( rawTs, buff )
 % check user input
 % if nargin == 1
 %     buff = 512; % This is default.
-%     
+%
 % end
 
 % check that input length matches
 nRecs = numel( buff );
-try
-    assert( isequal( numel( rawTs ), nRecs ) )
+nTs = numel( rawTs );
+if nRecs > 1
+    try
+        assert( isequal( nTs, nRecs ) )
+        
+    catch
+        error( 'Number of elements must match' )
+        
+    end
     
-catch
-    error( 'Number of elements must match' )
+else
+    buff = ones( 1, nTs ) * buff;
     
 end
 
@@ -45,7 +52,7 @@ for idxRec = 1 : nRecs
     thisStep = round( recDur / buff( idxRec ) );
     thisOff = linspace( 0, recDur - thisStep, buff( idxRec ) );
     thisVec = round( rawTs( idxRec ) + thisOff );
-%     tsMat( :, idxRec ) = thisVec;
+    %     tsMat( :, idxRec ) = thisVec;
     tStamp = cat( 2, tStamp, thisVec );
     
 end
