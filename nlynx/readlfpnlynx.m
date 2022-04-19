@@ -87,7 +87,7 @@ hdr = parsehdrnlynx( rawHdr );
 % Convert AD units to uV
 convFactor = hdr.convFactor;
 tempData = rawData( : ) * convFactor * 1e6;
-tempTs = interpts( rawTs, valSamp );
+tempTs = interpts( rawTs, valSamp( 1 ) );
 
 % decimate if desired
 if dec > 1
@@ -96,11 +96,11 @@ if dec > 1
     tempTs = downsample( tempTs, dec );
     
 end
-ts = tempTs;
+ts = tempTs ./ 1e6;
 
 % get Fs, and throw a warning if not integer.
-Fs = hdr.Fs ./ dec;
-if rem( hdr.Fs, dec ) > 0
+Fs = Fs( 1 ) ./ dec;
+if rem( Fs, dec ) > 0
     warning( 'sampling frequency not integer' )
     
 end
@@ -129,15 +129,18 @@ end
 
 % Convert dsp delay to seconds.
 hdr.dspDelay = hdr.delay ./ 1e6;
+hdr.dspDelayUnits = 's';
 
 % 
 csc = struct(...
     'FileName', fileName,...
     'Fs', Fs,...
     'Hdr', hdr,...
-    'PhysUnits', 'uV', ...
+    'DataUnits', 'uV', ...
     'Data', data, ...
-    'ts', ts );
+    'ts', ts,...
+    'tsUnits', 's',...
+    'chNum', chNum( 1 ) );
 
 disp('Done!')
 disp( ' ' )
