@@ -1,12 +1,13 @@
 % Load test data for Cheetah 5.7
-csc = readlfpnlynx('TestData\sampleCSC3-25');
+csc = readcsc('TestData\sampleCSC3-25');
 
 %% Test sampling frequency
 Fs = 1600;
 assert( abs( csc.Fs - Fs ) < eps )
 
-%% Test that Hdr is cell
-assert( iscell( csc.Hdr ) )
+%% Test correct header
+timeOpen = '12:44:40';
+assert( strcmp( csc.Hdr.timeOpen, timeOpen ) )
 
 %% Test first data point
 data1 = 18.37158203125;
@@ -18,4 +19,4 @@ assert( abs( csc.Data( end ) - dataEnd ) < eps )
 
 %% Test first timestamp
 ts1 = 2322115.666736;
-asert( abs( csc.ts( 1 ) - ts1 ) < eps )
+assert( abs( csc.ts( 1 ) - ts1 ) < eps )

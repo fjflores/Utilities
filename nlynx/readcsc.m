@@ -86,9 +86,9 @@ convFactor = hdr.convFactor;
 tempData = rawData( : ) * convFactor * 1e6;
 
 % Check records to decide which ts inerpolation to use
-dSamp = diff( validSamp );
+dSamp = diff( valSamp );
 if any( dSamp )
-    nRecs = numel( validSamp );
+    nRecs = numel( valSamp );
     idxDiff = find( dSamp );
     
     if numel( idxDiff ) == 1 && idxDiff == nRecs
