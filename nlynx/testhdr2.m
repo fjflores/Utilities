@@ -37,6 +37,14 @@ assert( abs( hdrInfo.ADChan - ADChan ) < eps )
 % Inverted input is false.
 assert( islogical( hdrInfo.inverted ) && ~hdrInfo.inverted )
 
+%% Test low cut
+lowCut = 0.1;
+assert( abs( hdrInfo.lowCut - lowCut ) < eps )
+
+%% Test high cut
+highCut = 500;
+assert( abs( hdrInfo.highCut - highCut ) < eps )
+
 %% Test enabling of DSP delay
 % delayEnabled is false.
 assert( islogical( hdrInfo.delayEnabled ) && ~hdrInfo.delayEnabled )
