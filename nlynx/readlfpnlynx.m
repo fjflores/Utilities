@@ -63,9 +63,6 @@ else
     
 end
 
-% Check records to decide which ts inerpolation to use
-
-
 if isempty( epoch )
     parm4 = 1; % extract all data
     [ rawTs, chNum, Fs, valSamp, rawData, rawHdr ] = Nlx2MatCSC(...
@@ -87,7 +84,22 @@ hdr = parsehdrnlynx( rawHdr );
 % Convert AD units to uV
 convFactor = hdr.convFactor;
 tempData = rawData( : ) * convFactor * 1e6;
-tempTs = interpts( rawTs, valSamp );
+
+% Check records to decide which ts inerpolation to use
+dSamp = diff( validSamp );
+if any( dSamp )
+    nRecs = numel( validSamp );
+    idxDiff = find( dSamp );
+    
+    if numel( idxDiff ) == 1 && idxDiff == nRecs
+        tempTs = interpts( rawTs, valSamp( 1 ) );
+        
+    else
+        tempTs = interpts( rawTs, valSamp );
+        
+    end
+    
+end
 
 % decimate if desired
 if dec > 1
