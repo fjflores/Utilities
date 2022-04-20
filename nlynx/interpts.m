@@ -31,8 +31,8 @@ end
 
 % Interpolate and accumulate timestamps
 tStamp = [];
-for idxRec = 1 : nRecs
-    test = ( idxRec + 1 ) <= nRecs;
+for idxRec = 1 : nTs
+    test = ( idxRec + 1 ) <= nTs;
     if test
         recDur = rawTs( idxRec + 1 ) - rawTs( idxRec ); % in microseconds
         

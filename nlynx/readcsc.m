@@ -1,30 +1,30 @@
-function csc = readlfpnlynx( fileName, epoch, dec )
-% READNLYNX reads neuralynx continuously sampled channels.
+function csc = readcsc( fileName, epoch, dec )
+% READCSC reads neuralynx continuously sampled channels.
 %
 % Syntax:
-% nlynx = readnlynx( fileName )
-% nlynx = readnlynx( fileName, epoch )
-% nlynx = readnlynx( fileName, epoch, dec )
+% csc = readcsc( fileName )
+% csc = readcsc( fileName, epoch )
+% csc = readcsc( fileName, epoch, dec )
 %
 % Description:
-% nlynx = readnlynx(fileName) returns a strucuture with all the data
+% csc = readcsc(fileName) returns a strucuture with all the data
 % contained in the neuralynx channel, wether a csc, nst or ntt.
 %
-% nlynx = readnlynx(fileName,epoch) where epoch is a two element vector,
+% csc = readcsc(fileName,epoch) where epoch is a two element vector,
 % returns the data from epoch(1) to epoch(2). the units of epoch are
 % seconds.
 %
-% nlynx = readnlynx(fileName,epoch,dec) where dec is an integer scalar,
+% csc = readcsc(fileName,epoch,dec) where dec is an integer scalar,
 % decimates the signal by the dec factor.
 %
 % Examples:
-% nlynx = readnlynx('CSC15.ncs') returns all the data from file CSC15,
+% csc = readcsc('CSC15.ncs') returns all the data from file CSC15,
 % without downsampling.
 %
-% nlynx = readnlynx('CSC15.ncs',[0 20]) returns the data for the first 20
+% csc = readcsc('CSC15.ncs',[0 20]) returns the data for the first 20
 % seconds of recording, without downsampling.
 %
-% nlynx = readnlynx('CSC15.ncs',[],10) returns all the data, downsampled by
+% csc = readcsc('CSC15.ncs',[],10) returns all the data, downsampled by
 % a factor of 10.
 %
 % Dependencies:
@@ -33,7 +33,7 @@ function csc = readlfpnlynx( fileName, epoch, dec )
 % Nlx2MatCSC.m and mex files.
 
 % Check user input.
-[ ~, ~, ext ] = fileparts( fileName );
+[ ~, fn, ext ] = fileparts( fileName );
 if isempty( ext )
     fileName = strcat( fileName, '.ncs' );
     
@@ -108,11 +108,11 @@ if dec > 1
     tempTs = downsample( tempTs, dec );
     
 end
-ts = tempTs;
+ts = tempTs ./ 1e6;
 
 % get Fs, and throw a warning if not integer.
-Fs = hdr.Fs ./ dec;
-if rem( hdr.Fs, dec ) > 0
+Fs = Fs( 1 ) ./ dec;
+if rem( Fs, dec ) > 0
     warning( 'sampling frequency not integer' )
     
 end
@@ -129,7 +129,7 @@ else
 end
 
 % else
-%     warning('MATLAB:readnlynx','There are non-complete records in the file')
+%     warning('MATLAB:readcsc','There are non-complete records in the file')
 %     % in the near future, actually look for the wrong record, if is not
 %     % the last
 %     nSamp = nSamp( end );
@@ -141,15 +141,18 @@ end
 
 % Convert dsp delay to seconds.
 hdr.dspDelay = hdr.delay ./ 1e6;
+hdr.dspDelayUnits = 's';
 
-% 
+% Create structure
 csc = struct(...
-    'FileName', fileName,...
+    'FileName', strcat( fn, ext ),...
     'Fs', Fs,...
     'Hdr', hdr,...
-    'PhysUnits', 'uV', ...
     'Data', data, ...
-    'ts', ts );
+    'DataUnits', 'uV', ...
+    'ts', ts,...
+    'tsUnits', 's',...
+    'ChNum', chNum( 1 ) );
 
 disp('Done!')
 disp( ' ' )
