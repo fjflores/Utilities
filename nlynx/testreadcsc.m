@@ -20,3 +20,7 @@ assert( abs( csc.Data( end ) - dataEnd ) < eps )
 %% Test first timestamp
 ts1 = 2322115.666736;
 assert( abs( csc.ts( 1 ) - ts1 ) < eps )
+
+%% Test last timestamp
+tsEnd = 2325874.386111;
+assert( abs( csc.ts( end ) - tsEnd ) < eps )
