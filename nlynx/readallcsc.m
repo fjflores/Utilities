@@ -22,42 +22,41 @@ function allCsc = readallcsc( dirPath )
 % Sort files for natural order
 [ cscFiles, idx ] = natsortfiles( tempCsc );
 conn = tempConn( idx );
+nFiles = length( cscFiles );
 
 % read first non-empty file and allocate data matrix within csc structure.
 datMat = nandatamat( conn, cscFiles, dirPath );
+labels = cell( 1, nFiles );
+channels = nan( 1, nFiles );
+Fs = nan( 1, nFiles );
+ts = nan( size( datMat ) );
 allData = struct(...
-    'Data', datMat,...
-    'Labels', { },...
-    'Channels', [ ],...
-    'Fs', Fs,...
+    'data', datMat,...
+    'labels', labels,...
+    'channels', channels,...
+    'fs', Fs,...
     'ts', ts,...
-    'dirPath', [ ] );
+    'dirPath', dirPath );
 
 % Loop reading all CSC channels. If not connected, fill with NaNs.
-nFiles = length( cscFiles );
 for fIdx = 1 : nFiles
-    thisFile = cscFiles( fIdx );
+    thisFile = cscFiles{ fIdx };
     f2read = fullfile( dirPath, thisFile );
     
-    try
+    if conn( fIdx )
         csc = readcsc( f2read );
+        datMat( :, fIdx ) = csc.Data;
         
-    catch me
-        if (strcmp( me.identifier, 'readcsc:emptyFile' ) )
-            msg = strcat( thisFile, ' is empty. Filling with NaNs' );
-            warning( msg );
-            
-        else
-            error( 'Unknown error' )
-            
-        end
+        
+    else
+        msg = strcat( thisFile, ' is empty.' );
+        warning( msg )
         
     end
-    datMat
     
     
 end
-    
+
 
 % helper fx's
 function datMat = nandatamat( conn, files, dirPath )
@@ -72,7 +71,7 @@ for testIdx = 1 : nFiles
     if test
         f2read = fullfile( dirPath, files{ testIdx } );
         valSamp = Nlx2MatCSC( f2read, [ 0 0 0 1 0 ], 0, 1, [ ] );
-        datMat = nan( sum( valSamp ), nFiles );        
+        datMat = nan( sum( valSamp ), nFiles );
         break
         
     end
@@ -81,5 +80,5 @@ end
 
 if testIdx == length( conn )
     error( 'nandatmat:allEmpty', 'All csc files are empty.' )
-
+    
 end
