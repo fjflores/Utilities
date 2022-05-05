@@ -24,12 +24,39 @@ function allCsc = readallcsc( dirPath )
 conn = tempConn( idx );
 
 % read first non-empty file and allocate data matrix within csc structure.
-% idx = 1;
-% test = conn( idx );
 datMat = nandatamat( conn, cscFiles, dirPath );
+allData = struct(...
+    'Data', datMat,...
+    'Labels', { },...
+    'Channels', [ ],...
+    'Fs', Fs,...
+    'ts', ts,...
+    'dirPath', [ ] );
 
 % Loop reading all CSC channels. If not connected, fill with NaNs.
-
+nFiles = length( cscFiles );
+for fIdx = 1 : nFiles
+    thisFile = cscFiles( fIdx );
+    f2read = fullfile( dirPath, thisFile );
+    
+    try
+        csc = readcsc( f2read );
+        
+    catch me
+        if (strcmp( me.identifier, 'readcsc:emptyFile' ) )
+            msg = strcat( thisFile, ' is empty. Filling with NaNs' );
+            warning( msg );
+            
+        else
+            error( 'Unknown error' )
+            
+        end
+        
+    end
+    datMat
+    
+    
+end
     
 
 % helper fx's
