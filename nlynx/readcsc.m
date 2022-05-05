@@ -54,12 +54,12 @@ fInfo = dir( fileName );
 minBytes = 16384; % from actual empty files
 if ~isempty( fInfo ) 
     if fInfo.bytes <= minBytes
-        error( 'readncs:emptyFile', '.ncs file seems to be empty.' )
+        error( 'readcsc:emptyFile', '.ncs file seems to be empty.' )
     
     end
     
 else
-    error( 'readncs:noFile', 'File does not exist.' )
+    error( 'readcsc:noFile', 'File does not exist.' )
     
 end
 
