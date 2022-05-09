@@ -35,7 +35,8 @@ function csc = readcsc( fileName, epoch, dec )
 % Check user input.
 [ ~, fn, ext ] = fileparts( fileName );
 if isempty( ext )
-    fileName = strcat( fileName, '.ncs' );
+    ext = '.ncs';
+    fileName = strcat( fileName, ext );
     
 end
 
@@ -52,10 +53,10 @@ end
 % Check file not empty. If < 16384 bytes, discard.
 fInfo = dir( fileName );
 minBytes = 16384; % from actual empty files
-if ~isempty( fInfo ) 
+if ~isempty( fInfo )
     if fInfo.bytes <= minBytes
         error( 'readcsc:emptyFile', '.ncs file seems to be empty.' )
-    
+        
     end
     
 else
@@ -72,9 +73,6 @@ else
     parm4 = 4; % extract only given records
     [ rawTs, chNum, Fs, valSamp, rawData, rawHdr ] = Nlx2MatCSC(...
         fileName, [ 1 1 1 1 1 ], 1, parm4, epoch );
-%     data = Nlx2MatCSC( fileName, [ 0 0 0 0 1 ], 0, parm4, epoch );
-%     tempData = data( : ) * convFactor * 1e6; % convert AD units to microvolts
-%     dummyTs = Nlx2MatCSC( fileName, [ 1 0 0 0 0 ], 0, parm4, epoch );
     
 end
 
@@ -86,29 +84,28 @@ convFactor = hdr.convFactor;
 tempData = rawData( : ) * convFactor * 1e6;
 
 % Check records to decide which ts inerpolation to use
-dSamp = diff( valSamp );
-if any( dSamp )
-    nRecs = numel( valSamp );
-    idxDiff = find( dSamp );
-    
-    if numel( idxDiff ) == 1 && idxDiff == nRecs
-        tempTs = interpts( rawTs, valSamp( 1 ) );
-        
-    else
-        tempTs = interpts( rawTs, valSamp );
-        
-    end
-    
-end
+% dSamp = diff( valSamp );
+% if any( dSamp )
+%     nRecs = numel( valSamp );
+%     idxDiff = find( dSamp );
+tempTs = interpts( rawTs, valSamp( 1 ) );
+%     
+% end
 
 % decimate if desired
 if dec > 1
     disp( ' Decimating data...' )
     tempData = decimate( tempData, dec, 'fir' );
-    tempTs = downsample( tempTs, dec );
+    tStamps = downsample( tempTs, dec );
+    
+else
+    tStamps = tempTs;
     
 end
-ts = tempTs ./ 1e6;
+
+% Create relative timestamps just to have everything ready.
+relTs = tStamps - tStamps( 1 );
+
 
 % get Fs, and throw a warning if not integer.
 Fs = Fs( 1 ) ./ dec;
@@ -116,7 +113,7 @@ if rem( Fs, dec ) > 0
     warning( 'sampling frequency not integer' )
     
 end
- 
+
 % invert data if recorded with positive upwards.
 if hdr.inverted
     disp( ' Data converted to positive downwards.' )
@@ -128,31 +125,17 @@ else
     
 end
 
-% else
-%     warning('MATLAB:readcsc','There are non-complete records in the file')
-%     % in the near future, actually look for the wrong record, if is not
-%     % the last
-%     nSamp = nSamp( end );
-%
-% end
-
-% Create timestamps in seconds.
-% tStamp = interpts( dummyTs );
-
-% Convert dsp delay to seconds.
-hdr.dspDelay = hdr.delay ./ 1e6;
-hdr.dspDelayUnits = 's';
-
 % Create structure
 csc = struct(...
-    'FileName', strcat( fn, ext ),...
+    'fileName', strcat( fn, ext ),...
+    'data', data, ...
+    'rawTs', rawTs,...
+    'tStamps', tStamps,...
+    'relTs', relTs,...
     'Fs', Fs,...
-    'Hdr', hdr,...
-    'Data', data, ...
-    'DataUnits', 'uV', ...
-    'ts', ts,...
-    'tsUnits', 's',...
-    'ChNum', chNum( 1 ) );
+    'hdr', hdr,...
+    'dataUnits', 'uV', ...
+    'tsUnits', 'us' );
 
 disp('Done!')
 disp( ' ' )
