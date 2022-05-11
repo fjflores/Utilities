@@ -30,7 +30,7 @@ assert( csc.rawTs( end ) == tsEnd )
 tsEnd = 2325874386111;
 assert( csc.tStamps( end ) == tsEnd )
 
-%% Test last realtive ts.
+%% Test last relative ts.
 tsEnd = 3758719375;
 assert( csc.relTs( end ) == tsEnd )
 
