@@ -1,9 +1,9 @@
 % Load known connected files
-% load( 'TestData\testConnFiles.mat' )
+recDir = 'D:\Code\Matlab\Utilities\nlynx\TestData';
 
 %% Test connected status
 connTst = [ false false false false true ]';
-recDir = 'D:\Code\Matlab\Utilities\nlynx\TestData';
+
 [ emptyFiles, fName ] = getempty( recDir );
 assert( isequal( emptyFiles, connTst ) )
 
