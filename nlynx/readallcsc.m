@@ -17,15 +17,15 @@ function allCsc = readallcsc( dirPath )
 %   dirPath: folder containing the pre-procesed data.
 
 % Find all connected channels
-[ tempConn, tempCsc ] = getconnected( dirPath );
+[ tempEmpty, tempCsc ] = getconnected( dirPath );
 
 % Sort files for natural order
 [ cscFiles, idx ] = natsortfiles( tempCsc );
-conn = tempConn( idx );
+emptyFiles = tempEmpty( idx );
 nFiles = length( cscFiles );
 
 % read first non-empty file and allocate data matrix within csc structure.
-datMat = nandatamat( conn, cscFiles, dirPath );
+datMat = nandatamat( emptyFiles, cscFiles, dirPath );
 labels = cell( 1, nFiles );
 channels = nan( 1, nFiles );
 Fs = nan( 1, nFiles );
@@ -43,7 +43,7 @@ for fIdx = 1 : nFiles
     thisFile = cscFiles{ fIdx };
     f2read = fullfile( dirPath, thisFile );
     
-    if conn( fIdx )
+    if ~emptyFiles( fIdx )
         csc = readcsc( f2read );
         datMat( :, fIdx ) = csc.Data;
         
