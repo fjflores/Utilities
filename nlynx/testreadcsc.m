@@ -30,7 +30,12 @@ assert( csc.rawTs( end ) == tsEnd )
 tsEnd = 2325874386111;
 assert( csc.tStamps( end ) == tsEnd )
 
-%% Test last relative ts.
+%% Test last relative ts
 tsEnd = 3758719375;
 assert( csc.relTs( end ) == tsEnd )
+
+%% Test last valid sample
+lastVal = 486;
+assert( csc.valSamps( end ) == lastVal )
+
 
