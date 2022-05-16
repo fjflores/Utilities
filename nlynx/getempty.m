@@ -4,6 +4,11 @@ ext = '*.ncs';
 files = dir( fullfile( recDir, ext ) );
 minBytes = 16384; % from actual empty files
 
+if isempty( files )
+    error( 'No .ncs files in this directory' )
+    
+end
+
 if ~isempty( files )
     nFiles = length( files );
     emptyFiles = false( nFiles, 1 );
