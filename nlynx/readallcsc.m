@@ -1,4 +1,4 @@
-function allCsc = readallcsc( dirPath )
+function allData = readallcsc( dirPath )
 % READCSC reads all csc channels inside a folder.
 %
 % Usage:
@@ -17,7 +17,7 @@ function allCsc = readallcsc( dirPath )
 %   dirPath: folder containing the pre-procesed data.
 
 % Find all connected channels
-[ tempEmpty, tempCsc ] = getconnected( dirPath );
+[ tempEmpty, tempCsc ] = getempty( dirPath );
 
 % Sort files for natural order
 [ cscFiles, idx ] = natsortfiles( tempCsc );
@@ -26,13 +26,12 @@ nFiles = length( cscFiles );
 
 % read first non-empty file and allocate data matrix within csc structure.
 datMat = nandatamat( emptyFiles, cscFiles, dirPath );
-labels = cell( 1, nFiles );
+% labels = cell( 1, nFiles );
 channels = nan( 1, nFiles );
 Fs = nan( 1, nFiles );
 ts = nan( size( datMat ) );
 allData = struct(...
     'data', datMat,...
-    'labels', labels,...
     'channels', channels,...
     'fs', Fs,...
     'ts', ts,...
@@ -41,12 +40,15 @@ allData = struct(...
 % Loop reading all CSC channels. If not connected, fill with NaNs.
 for fIdx = 1 : nFiles
     thisFile = cscFiles{ fIdx };
-    f2read = fullfile( dirPath, thisFile );
+%     [ ~, temp, ~ ] = fileparts( thisFile );
+    csc = readcsc( fullfile( dirPath, thisFile ) );
+    
+    % Fill matrix with info that is not dependent on empty files.
+    allData.labels{ fIdx } = csc.hdr.ADName;
+    allData.channels( fIdx ) = csc.hdr.ADChan;
     
     if ~emptyFiles( fIdx )
-        csc = readcsc( f2read );
-        datMat( :, fIdx ) = csc.Data;
-        
+        allData.data( :, fIdx ) = csc.data;
         
     else
         msg = strcat( thisFile, ' is empty.' );
@@ -54,6 +56,7 @@ for fIdx = 1 : nFiles
         
     end
     
+
     
 end
 
@@ -68,7 +71,7 @@ for testIdx = 1 : nFiles
     test = conn( testIdx );
     display( [ testIdx test ] )
     
-    if test
+    if ~test
         f2read = fullfile( dirPath, files{ testIdx } );
         valSamp = Nlx2MatCSC( f2read, [ 0 0 0 1 0 ], 0, 1, [ ] );
         datMat = nan( sum( valSamp ), nFiles );

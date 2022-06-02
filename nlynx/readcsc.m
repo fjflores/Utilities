@@ -53,26 +53,33 @@ end
 % Check file not empty. If < 16384 bytes, discard.
 fInfo = dir( fileName );
 minBytes = 16384; % from actual empty files
-if ~isempty( fInfo )
-    if fInfo.bytes <= minBytes
-        error( 'readcsc:emptyFile', '.ncs file seems to be empty.' )
-        
-    end
+if fInfo.bytes > minBytes
+    flagFull = true;
     
 else
-    error( 'readcsc:noFile', 'File does not exist.' )
+    flagFull = false;
     
 end
 
-if isempty( epoch )
+if isempty( epoch ) && flagFull
+    paramVec = [ 1 1 1 1 1 ];
     parm4 = 1; % extract all data
     [ rawTs, chNum, Fs, valSamps, rawData, rawHdr ] = Nlx2MatCSC(...
-        fileName, [ 1 1 1 1 1 ], 1, parm4, [ ] );
+        fileName, paramVec, 1, parm4, [ ] );
     
-else
+elseif ~isempty( epoch ) && flagFull
+    paramVec = [ 1 1 1 1 1 ];
     parm4 = 4; % extract only given records
     [ rawTs, chNum, Fs, valSamps, rawData, rawHdr ] = Nlx2MatCSC(...
-        fileName, [ 1 1 1 1 1 ], 1, parm4, epoch );
+        fileName, paramVec, 1, parm4, epoch );
+    
+else
+    rawHdr = getrawhdr( fileName );
+    rawTs = [];
+    chNum = [];
+    Fs = [];
+    valSamps = [];
+    rawData = [];
     
 end
 
@@ -88,29 +95,47 @@ tempData = rawData( : ) * convFactor * 1e6;
 % if any( dSamp )
 %     nRecs = numel( valSamp );
 %     idxDiff = find( dSamp );
-tempTs = interpts( rawTs, valSamps( 1 ) );
-%     
+if flagFull
+    tempTs = interpts( rawTs, valSamps( 1 ) );
+    
+end
+%
 % end
 
 % decimate if desired
-if dec > 1
-    disp( ' Decimating data...' )
-    tempData = decimate( tempData, dec, 'fir' );
-    tStamps = downsample( tempTs, dec );
+if flagFull
+    if dec > 1
+        disp( ' Decimating data...' )
+        tempData = decimate( tempData, dec, 'fir' );
+        tStamps = downsample( tempTs, dec );
+        
+    else
+        tStamps = tempTs;
+        
+    end
     
 else
-    tStamps = tempTs;
+    tStamps = [];
     
 end
 
 % Create relative timestamps just to have everything ready.
-relTs = tStamps - tStamps( 1 );
+if flagFull
+    relTs = tStamps - tStamps( 1 );
+    
+else
+    relTs = [];
+    
+end
 
 
 % get Fs, and throw a warning if not integer.
-Fs = Fs( 1 ) ./ dec;
-if rem( Fs, dec ) > 0
-    warning( 'sampling frequency not integer' )
+if flagFull
+    Fs = Fs( 1 ) ./ dec;
+    if rem( Fs, dec ) > 0
+        warning( 'sampling frequency not integer' )
+        
+    end
     
 end
 
