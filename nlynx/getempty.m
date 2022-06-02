@@ -4,8 +4,9 @@ ext = '*.ncs';
 files = dir( fullfile( recDir, ext ) );
 minBytes = 16384; % from actual empty files
 
+% throw an exception if the dir contains no ncs files.
 if isempty( files )
-    error( 'No .ncs files in this directory' )
+    error( 'getempty:noncsfiles', 'No .ncs files in this directory' )
     
 end
 
