@@ -16,6 +16,11 @@ function allData = readallcsc( dirPath )
 %   ts: timestamps vector (in s).
 %   dirPath: folder containing the pre-procesed data.
 
+% Get timestamp at acqusition start
+evs = readevnlynx( dirPath );
+firstTs = evs.TimeStamp( 1 );
+
+
 % Find all connected channels
 [ tempEmpty, tempCsc ] = getempty( dirPath );
 
@@ -29,7 +34,8 @@ datMat = nandatamat( emptyFiles, cscFiles, dirPath );
 % labels = cell( 1, nFiles );
 channels = nan( 1, nFiles );
 Fs = nan( 1, nFiles );
-ts = nan( size( datMat ) );
+[ nSamps, nChanns ] = size( datMat );
+ts = nan( nSamps, nChanns );
 allData = struct(...
     'data', datMat,...
     'channels', channels,...
@@ -44,10 +50,12 @@ for fIdx = 1 : nFiles
     csc = readcsc( fullfile( dirPath, thisFile ) );
     
     % Fill matrix with info that is not dependent on empty files.
-    allData.labels{ fIdx } = csc.hdr.ADName;
+    [ ~, allData.labels{ fIdx }, ~ ] = fileparts( csc.fileName );
     allData.channels( fIdx ) = csc.hdr.ADChan;
     allData.Fs( fIdx ) = csc.hdr.Fs;
+    asyncTs( :, fIdx ) = csc.tStamps;
     
+    % Fill data dependent on empty files
     if ~emptyFiles( fIdx )
         allData.data( :, fIdx ) = csc.data;
         
@@ -57,17 +65,16 @@ for fIdx = 1 : nFiles
         
     end
     
-
-    
 end
+
+ts = setupts( ts, firstTs, allData.Fs );
+allData.ts = ts;
 
 
 % helper fx's
 function datMat = nandatamat( conn, files, dirPath )
 
-
 nFiles = length( conn );
-
 for testIdx = 1 : nFiles
     test = conn( testIdx );
     display( [ testIdx test ] )
@@ -86,3 +93,16 @@ if testIdx == length( conn )
     error( 'nandatmat:allEmpty', 'All csc files are empty.' )
     
 end
+
+function ts = setupts( tsNan, firstTs, Fs )
+
+[ nSamps, nChanns ] = size( tsNan );
+for chIdx = 1 : nChanns
+    sampVec = 1 : nSamps;
+    dt = 1 / Fs( chIdx );
+    tsVec = sampVec * dt;
+    ts( :, chIdx ) = tsVec + ( firstTs / 1e6 );
+
+end
+
+
