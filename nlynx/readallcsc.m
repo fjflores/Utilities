@@ -1,8 +1,9 @@
-function allData = readallcsc( dirPath )
-% READCSC reads all csc channels inside a folder.
+function allData = readallcsc( dirPath, fList )
+% READCSC reads a group of csc channels in a folder.
 %
 % Usage:
 % allCsc = readallcsc( dirPath )
+% allCsc = readallcsc( dirPath, fNames )
 %
 % Input:
 % dirPath: Path to directory with CSC data.
@@ -21,7 +22,16 @@ evs = readevnlynx( dirPath );
 firstTs = evs.TimeStamp( 1 );
 
 % Find all connected channels
-[ tempEmpty, tempCsc ] = getempty( dirPath );
+if nargin == 1
+    [ tempEmpty, tempCsc ] = getempty( dirPath );
+    
+elseif nargin == 2
+    [ tempEmpty, tempCsc ] = getempty( dirPath, fList );
+    
+else
+    error( 'Wrong number of arguments' )
+    
+end
 
 % Sort files for natural order
 [ cscFiles, idx ] = natsortfiles( tempCsc );
@@ -68,6 +78,7 @@ end
 
 ts = setupts( ts, firstTs, allData.Fs );
 allData.ts = ts;
+allData.labels = cscFiles;
 
 
 % helper fx's
