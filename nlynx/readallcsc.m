@@ -20,7 +20,6 @@ function allData = readallcsc( dirPath )
 evs = readevnlynx( dirPath );
 firstTs = evs.TimeStamp( 1 );
 
-
 % Find all connected channels
 [ tempEmpty, tempCsc ] = getempty( dirPath );
 
