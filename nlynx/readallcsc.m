@@ -62,7 +62,8 @@ for fIdx = 1 : nFiles
     [ ~, allData.labels{ fIdx }, ~ ] = fileparts( csc.fileName );
     allData.channels( fIdx ) = csc.hdr.ADChan;
     allData.Fs( fIdx ) = csc.hdr.Fs;
-    asyncTs( :, fIdx ) = csc.tStamps;
+    allData.relTs = csc.relTs;
+    allData.asyncTs( :, fIdx ) = csc.tStamps;
     
     % Fill data dependent on empty files
     if ~emptyFiles( fIdx )
@@ -79,7 +80,6 @@ end
 ts = setupts( ts, firstTs, allData.Fs );
 allData.ts = ts;
 allData.labels = cscFiles;
-
 
 % helper fx's
 function datMat = nandatamat( conn, files, dirPath )
