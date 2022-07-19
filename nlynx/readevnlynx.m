@@ -6,11 +6,11 @@ function events = readevnlynx( evPath )
 % 
 % Output:
 %   events: table with columns:
-%       idx: event index number
-%       TimeStamp: in microseconds
-%       eventID: XXX 
-%       TTL: TTL port logical state
-%       Type: string describing the event
+%           idx: event index number
+%           TimeStamp: in microseconds
+%           eventID: XXX 
+%           TTL: TTL port logical state
+%           Type: string describing the event
 % 
 
 % Copyright:
@@ -19,7 +19,7 @@ function events = readevnlynx( evPath )
 f2read = fullfile( evPath, 'Events.nev' );
 [tRaw,ids,ttl,type] = Nlx2MatEV( f2read, [ 1 1 1 0 1 ], 0, 1, [ ] );
 
-warning( 'Timestamps are in microseconds.' )
+% warning( 'Timestamps are in microseconds.' )
 tRaw = tRaw';
 ids = ids';
 ttl = ttl';
