@@ -9,13 +9,15 @@ function allData = readallcsc( dirPath, fList )
 % dirPath: Path to directory with CSC data.
 %
 % Output:
-% allCsc: Structure with fields:
-%   Data: data matrix in samples x channels.
-%   Labels: CSC file name (e.g. 'CSC1').
-%   Channels: Channel numbers (e.g. 3)
-%   Fs: Sampling frequency (in Hz).
-%   ts: timestamps vector (in s).
-%   dirPath: folder containing the pre-procesed data.
+% allCsc: Structure with following fields:
+%       Data: data matrix in samples x channels.
+%       Labels: CSC file name (e.g. 'CSC1').
+%       Channels: Channel numbers (e.g. 3)
+%       Fs: Sampling frequency (in Hz).
+%       ts: timestamps vector (in us).
+%       firstTs: time recording started.
+%       loHiFilt: low- and high-cut filters for each channel.
+%       dirPath: folder containing the pre-procesed data.
 
 % Get timestamp at acqusition start
 evs = readevnlynx( dirPath );
@@ -40,7 +42,6 @@ nFiles = length( cscFiles );
 
 % read first non-empty file and allocate data matrix within csc structure.
 datMat = nandatamat( emptyFiles, cscFiles, dirPath );
-% labels = cell( 1, nFiles );
 channels = nan( 1, nFiles );
 Fs = nan( 1, nFiles );
 [ nSamps, nChanns ] = size( datMat );
@@ -55,15 +56,14 @@ allData = struct(...
 % Loop reading all CSC channels. If not connected, fill with NaNs.
 for fIdx = 1 : nFiles
     thisFile = cscFiles{ fIdx };
-%     [ ~, temp, ~ ] = fileparts( thisFile );
     csc = readcsc( fullfile( dirPath, thisFile ) );
     
     % Fill matrix with info that is not dependent on empty files.
     [ ~, allData.labels{ fIdx }, ~ ] = fileparts( csc.fileName );
     allData.channels( fIdx ) = csc.hdr.ADChan;
     allData.Fs( fIdx ) = csc.hdr.Fs;
-    allData.relTs = csc.relTs;
-    allData.asyncTs( :, fIdx ) = csc.tStamps;
+    allData.relTs( :, fIdx ) = csc.relTs;
+    allData.loHiFilt( fIdx, : ) = [ csc.hdr.lowCut csc.hdr.highCut ];
     
     % Fill data dependent on empty files
     if ~emptyFiles( fIdx )
@@ -76,10 +76,8 @@ for fIdx = 1 : nFiles
     end
     
 end
-
-ts = setupts( ts, firstTs, allData.Fs );
-allData.ts = ts;
 allData.labels = cscFiles;
+allData.firstTs = firstTs;
 
 % helper fx's
 function datMat = nandatamat( conn, files, dirPath )
@@ -102,17 +100,6 @@ end
 if testIdx == length( conn )
     error( 'nandatmat:allEmpty', 'All csc files are empty.' )
     
-end
-
-function ts = setupts( tsNan, firstTs, Fs )
-
-[ nSamps, nChanns ] = size( tsNan );
-for chIdx = 1 : nChanns
-    sampVec = 1 : nSamps;
-    dt = 1 / Fs( chIdx );
-    tsVec = sampVec * dt;
-    ts( :, chIdx ) = tsVec + ( firstTs / 1e6 );
-
 end
 
 
