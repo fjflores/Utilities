@@ -80,11 +80,16 @@ allData.labels = cscFiles;
 allData.firstTs = firstTs;
 
 % helper fx's
-function datMat = nandatamat( conn, files, dirPath )
+function datMat = nandatamat( emptyFiles, files, dirPath )
 
-nFiles = length( conn );
+nFiles = length( emptyFiles );
+if nFiles == sum( emptyFiles )
+    error( 'nandatmat:allEmpty', 'All csc files are empty.' )
+    
+end
+
 for testIdx = 1 : nFiles
-    test = conn( testIdx );
+    test = emptyFiles( testIdx );
     
     if ~test
         f2read = fullfile( dirPath, files{ testIdx } );
@@ -96,9 +101,6 @@ for testIdx = 1 : nFiles
     
 end
 
-if testIdx == length( conn )
-    error( 'nandatmat:allEmpty', 'All csc files are empty.' )
-    
-end
+
 
 
