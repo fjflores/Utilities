@@ -85,7 +85,6 @@ function datMat = nandatamat( conn, files, dirPath )
 nFiles = length( conn );
 for testIdx = 1 : nFiles
     test = conn( testIdx );
-    display( [ testIdx test ] )
     
     if ~test
         f2read = fullfile( dirPath, files{ testIdx } );
