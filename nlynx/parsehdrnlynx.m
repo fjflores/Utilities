@@ -18,15 +18,15 @@ end
 
 % Check header style
 if ~isempty( regexp( hdr{ 5 }, '-Cheetah', 'match' ) )
-    disp( 'Parsing Cheetah 5.4 header style' )
+%     disp( 'Parsing Cheetah 5.4 header style' )
     hdrInfo = parsehdr1( hdr );
     
 elseif ~isempty( regexp( hdr{ 10 }, '-Cheetah', 'match' ) )
-    disp( 'Parsing Cheetah 5.6 header style' )
+%     disp( 'Parsing Cheetah 5.6 header style' )
     hdrInfo = parsehdr2( hdr );
     
 elseif ~isempty( regexp( hdr{ 12 }, 'Cheetah', 'match' ) )
-    disp( 'Parsing Cheetah 5.7 header style' )
+%     disp( 'Parsing Cheetah 5.7 header style' )
     hdrInfo = parsehdr3( hdr );
     
 else

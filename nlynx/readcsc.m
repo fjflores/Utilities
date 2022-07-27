@@ -141,11 +141,11 @@ end
 
 % invert data if recorded with positive upwards.
 if hdr.inverted
-    disp( ' Data converted to positive downwards.' )
+%     disp( ' Data converted to positive downwards.' )
     data = tempData * -1;
     
 else
-    disp( ' Data recorded with positive downwards. No conversion.' )
+%     disp( ' Data recorded with positive downwards. No conversion.' )
     data = tempData;
     
 end
@@ -163,5 +163,5 @@ csc = struct(...
     'dataUnits', 'uV', ...
     'tsUnits', 'us' );
 
-disp('Done!')
-disp( ' ' )
+% disp('Done!')
+% disp( ' ' )
