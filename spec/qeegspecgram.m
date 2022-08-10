@@ -1,20 +1,25 @@
-function [ mf, sef, df ] = qeegspecgram( S, f )
-
+function [ mf, sef, df ] = qeegspecgram( S, f, fBand )
 % QEEGSPECGRAM computes quantitative eeg features from spectrogram
 % Usage:
 %   [ mf, sef, df ] = qeegspecgram( S, f )
+%   [ mf, sef, df ] = qeegspecgram( S, f, fBand )
 % 
 % Input:
 %   S: spectrogram matrix.
 %   f: frequency vector.
+%   fBand: Optional. Frequency limits to analyze as two-element vector. 
 % 
 % Output:
 %   mf: median frequency. 50th percentile of power concentration.
 %   sef: spectral edge. 95th percentile of power concentration.
 %   df: dominant frequency. Right now is the peak frequency.
 
-if nargin < 2
-    error( 'Matlab:qeegspecgram','Need the 2 arguments' )
+% Cut desired frequncy band.
+if nargin == 3
+    bandIdx = f > fBand( 1 ) & f < fBand( 2 );
+    S = S( :, bandIdx );
+    f = f( bandIdx );
+    
 end
 
 [ m, n ] = size( S );
