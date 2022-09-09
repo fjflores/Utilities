@@ -44,6 +44,7 @@ epochDur = 3; % set to three seconds epochs.
 dataMat = makesegments( data, Fs, [ 3 3 ] );
 if detr == true
       dataMat = detrend( dataMat );
+      
 end
 
 f0 = [ 60 120 180 ]; % frequency to remove.
