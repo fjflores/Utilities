@@ -26,20 +26,21 @@ firstTs = evs.TimeStamp( 1 );
 % Find all connected channels
 if nargin == 1
     [ tempEmpty, tempCsc ] = getempty( dirPath );
+    % Sort files into natural order
+    [ cscFiles, idx ] = natsortfiles( tempCsc );
+    emptyFiles = tempEmpty( idx );
     
 elseif nargin == 2
-    [ tempEmpty, tempCsc ] = getempty( dirPath, fList );
+    % keep files in order provided
+    [ emptyFiles, cscFiles ] = getempty( dirPath, fList );
     
 else
     error( 'Wrong number of arguments' )
     
 end
 
-% Sort files for natural order
-[ cscFiles, idx ] = natsortfiles( tempCsc );
-emptyFiles = tempEmpty( idx );
-nFiles = length( cscFiles );
 
+nFiles = length( cscFiles );
 % read first non-empty file and allocate data matrix within csc structure.
 datMat = nandatamat( emptyFiles, cscFiles, dirPath );
 channels = nan( 1, nFiles );
