@@ -58,6 +58,8 @@ allData = struct(...
 for fIdx = 1 : nFiles
     thisFile = cscFiles{ fIdx };
     csc = readcsc( fullfile( dirPath, thisFile ) );
+    valIdx = false( length( csc.data ), 1 );
+    valIdx( 1 : size( datMat, 1 ) ) = true;
     
     % Fill matrix with info that is not dependent on empty files.
     [ ~, allData.labels{ fIdx }, ~ ] = fileparts( csc.fileName );
@@ -67,9 +69,9 @@ for fIdx = 1 : nFiles
     
     % Fill data dependent on empty files
     if ~emptyFiles( fIdx )
-        allData.data( :, fIdx ) = csc.data;
-        allData.relTs( :, fIdx ) = csc.relTs;
-        allData.ts( :, fIdx ) = csc.tStamps;
+        allData.data( :, fIdx ) = csc.data( valIdx );
+        allData.relTs( :, fIdx ) = csc.relTs( valIdx );
+        allData.ts( :, fIdx ) = csc.tStamps( valIdx );
         
     else
         msg = strcat( thisFile, ' is empty.' );
@@ -77,8 +79,11 @@ for fIdx = 1 : nFiles
         
     end
     
+    % get channel name without extension
+    [ ~, chNames{ fIdx }, ~ ] = fileparts( cscFiles{ fIdx } );
+    
 end
-[ ~, chNames, ~ ] = fileparts( cscFiles );
+
 allData.labels = chNames;
 allData.firstTs = firstTs;
 allData.emptyFiles = emptyFiles;
