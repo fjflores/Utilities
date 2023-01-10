@@ -42,61 +42,67 @@ end
 
 % [ ~, baseIdx ] = replaceartifact(...
 %     S, t, baseEpoch, 'nan' );
-baseIdx = t >= baseEpoch( 1 ) & t <= baseEpoch( 2 );
-Sbase = S( baseIdx, : );
-[ m, n ] = size( S );
-muBase = mean( Sbase );
-sdBase = std( Sbase );
 
-% compute normalized
-disp( 'Normalizing spectrogram' )
-disp( 'Using method:' )
-if strcmp( sTrans, 'log' )
-    switch meth
-        case 'median'
-            % subtract median
-            disp( ' Median subtraction' )
-            muMat = repmat( median( Sbase ), m, 1 );
-            normS = S - muMat;
-            
-        case 'mean'
-            % subtract mean
-            disp( ' Mean subtraction' )
-            muMat = repmat( muBase, m, 1 );
-            normS = S - muMat;
-            
-        otherwise
-            error( 'Bad method and/or transformation')
-            
-    end
+nSpec = size( S, 3 );
+if nSpec == 1
+    fprintf( 'Normalizing spectrogram via %s %s\n', meth, sTrans )
     
-elseif strcmp( sTrans, 'nolog' )
-    switch meth
-        case 'perc'
-            % get percent change from the mean
-            disp( ' Percent of mean baseline' )
-            muMat = repmat( muBase, m, 1 );
-            normS = 100 * ( ( S - muMat ) ./ muMat );
-            
-        case 'ratio'
-            % get power ratio
-            disp( ' Ratio to mean baseline' )
-            muMat = repmat( muBase, m, 1 );
-            normS = S ./ muMat;
-            
-        case 'zscore'
-            % get z-scored spectrogram
-            disp( ' Z-score' )
-            muMat = repmat( muBase, m, 1 );
-            sdMat = repmat( sdBase, m, 1 );
-            normS = ( S - muMat ) ./ sdMat;
-            
-        case 'median'
-            % get median normalized spec
-            disp( ' Ratio to median baseline' )
-            medS = repmat( median( Sbase ), m, 1 );
-            normS = S ./ medS;
-            
+else
+    fprintf( 'Normalizing spectrograms %s %s\n', meth, sTrans )
+    
+end
+
+for specIdx = 1 : nSpec
+    baseIdx = t >= baseEpoch( 1 ) & t <= baseEpoch( 2 );
+    Sbase = squeeze( S( baseIdx, :, specIdx ) );
+    S2proc = squeeze( S( :, :, specIdx ) );
+    [ m, n ] = size( S2proc );
+    muBase = mean( Sbase );
+    sdBase = std( Sbase );
+    
+    % compute normalized
+    if strcmp( sTrans, 'log' )
+        switch meth
+            case 'median'
+                % subtract median
+                muMat = repmat( median( Sbase ), m, 1 );
+                normS( :, :, specIdx ) = S2proc - muMat;
+                
+            case 'mean'
+                % subtract mean
+                muMat = repmat( muBase, m, 1 );
+                normS( :, :, specIdx ) = S2proc - muMat;
+                
+            otherwise
+                error( 'Bad method and/or transformation')
+                
+        end
+        
+    elseif strcmp( sTrans, 'nolog' )
+        switch meth
+            case 'perc'
+                % get percent change from the mean
+                muMat = repmat( muBase, m, 1 );
+                normS( :, :, specIdx ) = 100 * ( ( S2proc - muMat ) ./ muMat );
+                
+            case 'ratio'
+                % get power ratio
+                muMat = repmat( muBase, m, 1 );
+                normS( :, :, specIdx ) = S2proc ./ muMat;
+                
+            case 'zscore'
+                % get z-scored spectrogram
+                muMat = repmat( muBase, m, 1 );
+                sdMat = repmat( sdBase, m, 1 );
+                normS( :, :, specIdx ) = ( S2proc - muMat ) ./ sdMat;
+                
+            case 'median'
+                % get median normalized spec
+                medS = repmat( median( Sbase ), m, 1 );
+                normS( :, :, specIdx ) = S2proc ./ medS;
+                
+        end
+        
     end
     
 end
