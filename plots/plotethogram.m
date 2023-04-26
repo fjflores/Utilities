@@ -1,4 +1,4 @@
-function hAx = plotethogram( states, t )
+function hAx = plotethogram( states, t, plotLines )
 
 % zValues = combineCells(embVals);
 % N = length( states( :, 1 ) );
@@ -18,12 +18,25 @@ if nargin < 2
     
 end
 
-hAx = imagesc( t, 0 : nStates, ethogram' );
+hAx = axes;
+imagesc( t, 0 : nStates, ethogram' );
 % colormap( cc )
 caxis( [ 0 nStates ] )
 hold on
 axis xy
-% for i = 0 : nStates
-%     plot( [ 0 t( end ) ], double( i ) - 0.5 + zeros( 1, 2 ), 'k-' )
-%     
-% end
+box off
+set( hAx, 'YTick', unique( states ) )
+
+if nargin < 3 
+    plotLines = true;
+    
+end
+
+if plotLines
+    for i = 0 : nStates
+        plot( [ 0 t( end ) ], double( i ) - 0.5 + zeros( 1, 2 ),...
+            'Color', [ 0.8 0.8 0.8 ], 'Linewidth', 0.1 )
+        
+    end
+
+end
