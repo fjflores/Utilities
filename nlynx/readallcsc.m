@@ -78,8 +78,7 @@ for fIdx = 1 : nFiles
     end
     
 end
-[ ~, chNames, ~ ] = fileparts( cscFiles );
-allData.labels = chNames;
+% allData.labels = chNames;
 allData.firstTs = firstTs;
 allData.emptyFiles = emptyFiles;
 
