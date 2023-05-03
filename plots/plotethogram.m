@@ -1,4 +1,4 @@
-function hAx = plotethogram( states, t, plotLines )
+function plotethogram( states, t, plotLines )
 % PLOTETHOGRAM plots an ethogram for any number of states
 % 
 % Usage:
@@ -24,20 +24,20 @@ if nargin < 3
     
 end
 
-% Check if lowest state index is 0.
-if min( states ) == 0
-    warning( 'Adding one to states to match matlab indexing.' )
-    states = states + 1;
-    
-end
-
-nStates = max( states );
-nPoints = length( states );
-ethogram = zeros( nPoints, nStates );
-for ptsIdx = 1 : nPoints
-    ethogram( ptsIdx, states( ptsIdx ) ) = states( ptsIdx );
-    
-end
+% % Check if lowest state index is 0.
+% if min( states ) == 0
+%     warning( 'Adding one to states to match matlab indexing.' )
+%     states = states + 1;
+%     
+% end
+% 
+% nStates = max( states );
+% nPoints = length( states );
+% ethogram = zeros( nPoints, nStates );
+% for ptsIdx = 1 : nPoints
+%     ethogram( ptsIdx, states( ptsIdx ) ) = states( ptsIdx );
+%     
+% end
 
 ethogram( ethogram == 0 ) = NaN;
 
@@ -45,23 +45,23 @@ ethogram( ethogram == 0 ) = NaN;
 dummy = cat( 2, ethogram, nStates * ones( nPoints, 1 ) );
 pcolEtho = cat( 1, dummy, nStates * ones( 1, nStates + 1 ) );
 
-hAx = axes;
+% hAx = axes;
 t2plot = [ t t(end) + mean( diff( t ) ) ];
 states2plot = 1 : nStates + 1;
-pcolor( hAx, t2plot, states2plot, pcolEtho' );
+pcolor( t2plot, states2plot, pcolEtho' );
 shading flat
 caxis( [ 1 nStates ] )
 hold on
 axis xy
 box off
-set( hAx,...
+set( gca,...
     'YTick', ( 1 : nStates ) + 0.5,...
     'YTickLabels', 1 : nStates,...
     'TickDir', 'out' )
 
 if plotLines
     for i = 1 : nStates
-        plot( hAx, [ 0 t( end ) ], double( i ) + zeros( 1, 2 ),...
+        plot( [ 0 t( end ) ], double( i ) + zeros( 1, 2 ),...
             'Color', [ 0.8 0.8 0.8 ], 'Linewidth', 0.1 )
         
     end
