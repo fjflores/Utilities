@@ -1,21 +1,19 @@
-function plotethogram( states, t, plotLines )
+function plotethogram( ethoMat, t, plotLines )
 % PLOTETHOGRAM plots an ethogram for any number of states
 % 
 % Usage:
 % hAx = plotethogram( states, t, plotLines )
 % 
 % Input:
-% states: vector with numerical states labels.
+% ethoMat: matrix with state labels in timepoints x # of states format.
 % t: timestamps vector. Optional.
 % plotLines: boolean flag to whether plot horizontal lines. Optional.
-% 
-% Output:
-% hAx = axes handle
 
 
 % Check input.
+nPoints = size( ethoMat, 1 );
 if nargin < 2
-    t = 1 : length( states );
+    t = 1 : nPoints;
     
 end
 
@@ -24,25 +22,12 @@ if nargin < 3
     
 end
 
-% % Check if lowest state index is 0.
-% if min( states ) == 0
-%     warning( 'Adding one to states to match matlab indexing.' )
-%     states = states + 1;
-%     
-% end
-% 
-% nStates = max( states );
-% nPoints = length( states );
-% ethogram = zeros( nPoints, nStates );
-% for ptsIdx = 1 : nPoints
-%     ethogram( ptsIdx, states( ptsIdx ) ) = states( ptsIdx );
-%     
-% end
-
-ethogram( ethogram == 0 ) = NaN;
+% Plot
+nStates = size( ethoMat, 2 );
+ethoMat( ethoMat == 0 ) = NaN;
 
 % Add fake columns and rows because of stupid pcolor.
-dummy = cat( 2, ethogram, nStates * ones( nPoints, 1 ) );
+dummy = cat( 2, ethoMat, nStates * ones( nPoints, 1 ) );
 pcolEtho = cat( 1, dummy, nStates * ones( 1, nStates + 1 ) );
 
 % hAx = axes;
