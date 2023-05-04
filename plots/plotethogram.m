@@ -11,14 +11,17 @@ function plotethogram( stateLabels, t, plotLines, stateNames )
 
 
 % Check input.
-[ nPoints, nStates ] = size( stateLabels );
-
 % Check if vector or matrix. convert to matrix if vector
-if nPoints == 1 || nStates == 1 
+if isrow( stateLabels ) || iscolumn( stateLabels )
+    % stateLabels is not a matrix. Build one.
     ethoMat = buildethomat( stateLabels );
-    [ nPoints, nStates ] = size( ethoMat );
+    
+else
+    % stateLabels is a matrix.
+    ethoMat = stateLabels;
     
 end
+[ nPoints, nStates ] = size( ethoMat );
 
 if nargin < 2
     t = 1 : nPoints;
