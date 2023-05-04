@@ -32,3 +32,10 @@ for ptsIdx = 1 : nPoints
     ethoMat( ptsIdx, states( ptsIdx ) ) = states( ptsIdx );
     
 end
+
+% Check if there are columns with only zeros.
+zeroIdx = any( ethoMat );
+if sum( zeroIdx < nStates )
+    ethoMat( :, ~zeroIdx ) = [];
+    
+end
