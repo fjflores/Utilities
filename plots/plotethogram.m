@@ -42,8 +42,8 @@ ethoMat( ethoMat == 0 ) = NaN;
 dummy = cat( 2, ethoMat, nStates * ones( nPoints, 1 ) );
 pcolEtho = cat( 1, dummy, nStates * ones( 1, nStates + 1 ) );
 
-% hAx = axes;
-t2plot = [ t t(end) + mean( diff( t ) ) ];
+t2plot = t;
+t2plot( end + 1 ) = t2plot( end ) + mean( diff( t2plot ) );
 states2plot = 1 : nStates + 1;
 pcolor( t2plot, states2plot, pcolEtho' );
 shading flat
