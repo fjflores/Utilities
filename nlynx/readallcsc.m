@@ -15,13 +15,13 @@ function allData = readallcsc( dirPath, fList )
 %       Channels: Channel numbers (e.g. 3)
 %       Fs: Sampling frequency (in Hz).
 %       ts: timestamps vector (in us).
-%       firstTs: time recording started.
+%       firstEvTs: time recording started.
 %       loHiFilt: low- and high-cut filters for each channel.
 %       dirPath: folder containing the pre-procesed data.
 
 % Get timestamp at acqusition start
 evs = readevnlynx( dirPath );
-firstTs = evs.TimeStamp( 1 );
+firstEvTs = evs.TimeStamp( 1 );
 
 % Find all connected channels
 if nargin == 1
@@ -79,7 +79,7 @@ for fIdx = 1 : nFiles
     
 end
 % allData.labels = chNames;
-allData.firstTs = firstTs;
+allData.firstEvTs = firstEvTs;
 allData.emptyFiles = emptyFiles;
 
 % helper fx's
