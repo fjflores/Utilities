@@ -63,7 +63,7 @@ if isempty( stateNames )
     
 else
     assert( nStates == length( stateNames ),...
-        'y-labels do no mathc number of states' )
+        'y-labels do no match number of states' )
     set( gca, 'YTickLabels', stateNames )
     
 end

@@ -1,6 +1,9 @@
 function events = readevnlynx( evPath )
 % READEVNLYNX read nlynx events file to a table.
 % 
+% Usage:
+% events = readevnlynx( evPath )
+% 
 % Input:
 %   fPath: path to events file.
 % 
