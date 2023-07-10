@@ -1,4 +1,4 @@
-function plotmultispec( specMat, rows, cols, kind, specsIdx )
+function hAx = plotmultispec( specMat, rows, cols, trans )
 % PLOTMULTISPEC makes a figure with multiple spectra/coherence.
 %
 % Usage:
@@ -16,20 +16,19 @@ function plotmultispec( specMat, rows, cols, kind, specsIdx )
 
 % Check input correcteness.
 nPlots = rows * cols;
-if exist( 'specsIdx', 'var' ) ~= 1
-    disp(...
-        sprintf( 'No idx provided.\n Plotting %u random plots.', nPlots ) )
-    [ ~, ~, z ] = size( specMat );
-    specsIdx = sort( randsample( z, nPlots ) );
+nSpecs = size( specMat, 3 );
+if nSpecs > nPlots
+    warning(...
+        'More spectrograms than plots. Plotting only first %u\n', nPlots )
+    specMat = specMat( :, :, 1 : nPlots );
+    nSpecs = nPlots;
     
 end
-nIdx = length( specsIdx );
-assert( nIdx <= nPlots )
 
 % Define standardization fx.
-switch kind
+switch trans
     case 'spec'
-        stdFx = @pow2db;
+        stdFx = @( x ) 10 * log10( x );
         barLab = 'power (db)';
         
     case 'coher'
@@ -43,32 +42,34 @@ switch kind
         
 end
 
-specs2plot = stdFx( specMat( :, :, specsIdx ) );
-clear specMat
-cLim = prctile( specs2plot( : ), [ 5 99 ] );
-
-for plotIdx = 1 : nIdx
-    subplot( rows, cols, plotIdx )
-    thisSpec =  squeeze( specs2plot( :, :, plotIdx ) );
-    imagesc( thisSpec' )
+for plotIdx = 1 : nSpecs
+    hAx( plotIdx ) = subplot( rows, cols, plotIdx );
+    thisSpec =  squeeze( specMat( :, :, plotIdx ) );
+    spec2plot = stdFx( thisSpec );
+    allLims( plotIdx, 1 : 2 ) = prctile( spec2plot( : ), [ 5 99 ] );
+    imagesc( spec2plot' );
     axis xy
     axis off
-    caxis( cLim );
     colormap( magma )
     
     ylim = get( gca, 'ylim' );
     xlim = get( gca, 'xlim' );
     
     posX = xlim( 1 ) + xlim( 2 ) * 0.025;
-    posY = ylim( 2 ) - ylim( 2 ) * 0.1;
+    posY = ylim( 2 ) - ylim( 2 ) * 0.05;
     
-    msg = sprintf( '%u', specsIdx( plotIdx ) );
+    msg = sprintf( '%u', plotIdx );
     text( posX, posY, msg, 'Color', 'w', 'FontWeight', 'bold' )
     
-    if plotIdx == nPlots
+    if plotIdx == nSpecs
         ffcbar( gcf, gca, barLab );
         
     end
     
 end
 
+globalCLim = [ min( allLims( :, 1 ) ) max( allLims( :, 2 ) ) ];
+for i = 1 : nSpecs
+    caxis( hAx( i ), globalCLim );
+    
+end

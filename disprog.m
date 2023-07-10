@@ -17,7 +17,8 @@ if i == 1
 end
 
 if i == n
-    fprintf( ' 100%% complete in %.2f seconds.\n', toc( start ) );
+    t2 = humantime( toc( start ) );
+    fprintf( ' 100%% complete in %s.\n', t2 );
     clear start;
     
 elseif floor( i * steps / n ) ~= floor( ( i - 1 ) * steps / n )
