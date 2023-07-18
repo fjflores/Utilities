@@ -1,4 +1,4 @@
-function hAx = plotmultispec( specMat, rows, cols, trans )
+function hAx = plotmultitf( specMat, rows, cols, trans )
 % PLOTMULTISPEC makes a figure with multiple spectra/coherence.
 %
 % Usage:
@@ -42,8 +42,10 @@ switch trans
         
 end
 
+
+gap = [ 0.01 0.01 ];
 for plotIdx = 1 : nSpecs
-    hAx( plotIdx ) = subplot( rows, cols, plotIdx );
+    hAx( plotIdx ) = subtightplot( rows, cols, plotIdx, gap );
     thisSpec =  squeeze( specMat( :, :, plotIdx ) );
     spec2plot = stdFx( thisSpec );
     allLims( plotIdx, 1 : 2 ) = prctile( spec2plot( : ), [ 5 99 ] );
