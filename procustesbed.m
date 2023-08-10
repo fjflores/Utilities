@@ -17,11 +17,11 @@ if length( signal ) < nTotal
     deltaLength = nTotal - length( signal );
     switch modo
         case 'nan'
-            disp( 'Adding nan''s.' )
+            % disp( 'Adding nan''s.' )
             seg = nan( deltaLength, 1 );
     
         case 'zero'
-            disp( 'Adding zeros.' )
+            % disp( 'Adding zeros.' )
             seg = zeros( deltaLength, 1 );
             
         otherwise
