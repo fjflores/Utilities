@@ -7,29 +7,38 @@ function hAx = plotmultitf( t, f, specMat, dims, varargin )
 %
 % The function assumes that all the time-frequency charts have the same
 % size.
-% 
+%
 % Input:
 % t: timestamps vector for x-axis.
 % f: frequency vector for y-axis.
 % specMat: tensor with freqs x times x charts.
 % dims: two-element vector with [ rows cols ] for subplot.
-% transform: transformation to apply. 'spec' for 10*log10, 'coher' 
-% for atanh. 'none' for none.
-% labels: cell array text to display in the top left corner of the chart, 
-% identifying it to the general public.
+% Name-value pairs:
+%   Transform: transformation to apply. 'spec' for power, 'coher'
+%   for atanh, 'wavemag' for wavelet abs, 'wavepow' for wavelet 
+%   abs squared, and 'none' for none.
+% 
+%   Labels: cell array text to display in the top left corner of the chart,
+%   Default is the index of eafh tf chart.
+%   
+%   PlotMap: vector with the same length as rows * cols, which dictates the
+%   subplot in which tf charts should appear in the figure. If zero, then 
+%   that position is skipped.
+%   
 %
 % Output:
-% figure with a montage of time-frequency charts.
+% Figure with a montage of time-frequency charts and axes handles for each
+% subplot.
 
 % set up name-value pairs
 transform = 'none';
-
 nCharts = size( specMat, 3 );
 for i = 1 : nCharts
     labels{ i } = i;
 
 end
 clear i
+plotMap = 1 : nCharts;
 
 % Parse  name-value pairs
 names = lower( varargin( 1 : 2 : end ) );
@@ -38,16 +47,22 @@ for k = 1 : numel( names )
     switch lower( names{ k } )
         case "transform"
             transform = values{ k };
-            
+
         case "labels"
             labels = values{ k };
-            
+
+        case "barlab"
+            barLab = values{ k };
+
+        case "plotmap"
+            plotMap = values{ k };
+
         otherwise
             error( '''%s'' is not a valid Name for Name, Value pairs.',...
                 names{ k } )
-            
+
     end
-    
+
 end
 
 % Check input correctness.
@@ -60,65 +75,84 @@ if nSpecs > nPlots
         'More spectrograms than plots. Plotting only first %u\n', nPlots )
     specMat = specMat( :, :, 1 : nPlots );
     nSpecs = nPlots;
-    
+
 end
 
 % Define standardization fx.
 switch transform
     case 'spec'
         stdFx = @( x ) 10 * log10( x );
-        barLab = 'power (db)';
-        
+        barLab = 'Power (dB)';
+
     case 'coher'
         stdFx = @atanh;
-        barLab = 'z-coherence (au)';
-        
+        barLab = 'atanh^{-1} (a.u.)';
+
+    case 'wavemag'
+        stdFx = @( x ) abs( x );
+        barLab = 'Amp. (\muV)';
+
+    case 'wavepow'
+        stdFx = @( x ) abs( x ) .^ 2;
+        barLab = 'Power (\muV ^{2})';
+
     otherwise
         stdFx = @( x ) 1 * x;
         barLab = 'N/A';
-        
+
 end
 
 
 gap = [ 0.01 0.01 ];
-for plotIdx = 1 : nSpecs
-    hAx( plotIdx ) = subtightplot( rows, cols, plotIdx, gap );
-    thisSpec =  squeeze( specMat( :, :, plotIdx ) );
-    spec2plot = stdFx( thisSpec );
-    allLims( plotIdx, 1 : 2 ) = prctile( spec2plot( : ), [ 5 99 ] );
-    imagesc( t, f, spec2plot' );
-    axis xy
-    axis off
-    colormap( magma )
+cnt = 1;
+for plotIdx = 1 : nPlots
+    thisTf = plotMap( plotIdx );
     
-    ylim = get( gca, 'ylim' );
-    xlim = get( gca, 'xlim' );
-    
-    posX = xlim( 1 ) + xlim( 2 ) * 0.025;
-    posY = ylim( 2 ) - ylim( 2 ) * 0.05;
-    
-    msg = sprintf( '%s', num2str( labels{ plotIdx } ) );
-    text( posX, posY, msg, 'Color', 'w', 'FontWeight', 'bold' )
-    
-    if plotIdx == 1
-        axis on
-        set( hAx( plotIdx ), 'XTickLabel', {} )
-        box off
+    if thisTf > 0
+        hAx( cnt ) = subtightplot( rows, cols, plotIdx, gap );
+        thisSpec =  squeeze( specMat( :, :, thisTf ) );
+        spec2plot = stdFx( thisSpec );
+        allLims( cnt, 1 : 2 ) = prctile( spec2plot( : ), [ 5 99 ] );
+        imagesc( t, f, spec2plot' );
+        axis xy
+        axis off
+        colormap( magma )
+
+        ylim = get( gca, 'ylim' );
+        xlim = get( gca, 'xlim' );
+
+        posX = xlim( 1 ) + xlim( 2 ) * 0.025;
+        posY = ylim( 2 ) - ylim( 2 ) * 0.05;
+
+        msg = sprintf( '%s', num2str( labels{ cnt } ) );
+        text( posX, posY, msg, 'Color', 'w', 'FontWeight', 'bold' )
+
+        if cnt == 1
+            axis on
+            set( hAx( cnt ), 'XTickLabel', {} )
+            box off
+
+        end
+
+        if cnt == nSpecs
+            ffcbar( gcf, gca, barLab );
+            axis on
+            set( hAx( cnt ), 'YTickLabel', {} )
+            box off
+
+        end
+
+        if plotIdx < nPlots
+            cnt = cnt + 1;
+
+        end
 
     end
 
-    if plotIdx == nSpecs
-        ffcbar( gcf, gca, barLab );
-        axis on
-        set( hAx( plotIdx ), 'YTickLabel', {} )
-        box off
-
-    end
-    
 end
 
 globalCLim = [ min( allLims( :, 1 ) ) max( allLims( :, 2 ) ) ];
-for i = 1 : nSpecs
+for i = 1 : cnt
     caxis( hAx( i ), globalCLim );
-    
+
 end
