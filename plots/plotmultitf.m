@@ -15,16 +15,19 @@ function hAx = plotmultitf( t, f, specMat, dims, varargin )
 % dims: two-element vector with [ rows cols ] for subplot.
 % Name-value pairs:
 %   Transform: transformation to apply. 'spec' for power, 'coher'
-%   for atanh, 'wavemag' for wavelet abs, 'wavepow' for wavelet 
+%   for atanh, 'wavemag' for wavelet abs, 'wavepow' for wavelet
 %   abs squared, and 'none' for none.
-% 
+%
 %   Labels: cell array text to display in the top left corner of the chart,
 %   Default is the index of eafh tf chart.
-%   
+%
 %   PlotMap: vector with the same length as rows * cols, which dictates the
-%   subplot in which tf charts should appear in the figure. If zero, then 
+%   subplot in which tf charts should appear in the figure. If zero, then
 %   that position is skipped.
-%   
+% 
+%   ColorScale: 'global' sets the same color scale for all the plots.
+%   'local' keeps each plot to its own colorscale.
+%
 %
 % Output:
 % Figure with a montage of time-frequency charts and axes handles for each
@@ -32,13 +35,14 @@ function hAx = plotmultitf( t, f, specMat, dims, varargin )
 
 % set up name-value pairs
 transform = 'none';
+colorScale = 'global';
 nCharts = size( specMat, 3 );
 for i = 1 : nCharts
     labels{ i } = i;
 
 end
-clear i
 plotMap = 1 : nCharts;
+clear i
 
 % Parse  name-value pairs
 names = lower( varargin( 1 : 2 : end ) );
@@ -56,6 +60,9 @@ for k = 1 : numel( names )
 
         case "plotmap"
             plotMap = values{ k };
+
+        case "colorscale"
+            colorScale = values{ k };
 
         otherwise
             error( '''%s'' is not a valid Name for Name, Value pairs.',...
@@ -89,10 +96,12 @@ switch transform
         barLab = 'atanh^{-1} (a.u.)';
 
     case 'wavemag'
+        specMat = permute( specMat, [ 2 1 3 ] );
         stdFx = @( x ) abs( x );
         barLab = 'Amp. (\muV)';
 
     case 'wavepow'
+        specMat = permute( specMat, [ 2 1 3 ] );
         stdFx = @( x ) abs( x ) .^ 2;
         barLab = 'Power (\muV ^{2})';
 
@@ -107,7 +116,7 @@ gap = [ 0.01 0.01 ];
 cnt = 1;
 for plotIdx = 1 : nPlots
     thisTf = plotMap( plotIdx );
-    
+
     if thisTf > 0
         hAx( cnt ) = subtightplot( rows, cols, plotIdx, gap );
         thisSpec =  squeeze( specMat( :, :, thisTf ) );
@@ -135,7 +144,11 @@ for plotIdx = 1 : nPlots
         end
 
         if cnt == nSpecs
-            ffcbar( gcf, gca, barLab );
+            if strcmp( colorScale, 'global' )
+                ffcbar( gcf, gca, barLab );
+
+            end
+            
             axis on
             set( hAx( cnt ), 'YTickLabel', {} )
             box off
@@ -151,8 +164,14 @@ for plotIdx = 1 : nPlots
 
 end
 
-globalCLim = [ min( allLims( :, 1 ) ) max( allLims( :, 2 ) ) ];
-for i = 1 : cnt
-    caxis( hAx( i ), globalCLim );
+
+if strcmp( colorScale, 'global' )
+    globalCLim = [ min( allLims( :, 1 ) ) max( allLims( :, 2 ) ) ];
+
+    for i = 1 : cnt
+        caxis( hAx( i ), globalCLim );
+
+    end
 
 end
+
