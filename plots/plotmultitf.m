@@ -37,10 +37,7 @@ function hAx = plotmultitf( t, f, specMat, dims, varargin )
 transform = 'none';
 colorScale = 'global';
 nCharts = size( specMat, 3 );
-for i = 1 : nCharts
-    labels{ i } = i;
-
-end
+labels = vec2cell( 1 : nCharts );
 plotMap = 1 : nCharts;
 clear i
 
@@ -114,6 +111,13 @@ end
 
 gap = [ 0.01 0.01 ];
 cnt = 1;
+if ~iscell( labels )
+    lab2 = vec2cell( labels );
+    clear labels
+    labels = lab2;
+
+end
+
 for plotIdx = 1 : nPlots
     thisTf = plotMap( plotIdx );
 
@@ -125,7 +129,6 @@ for plotIdx = 1 : nPlots
         imagesc( t, f, spec2plot' );
         axis xy
         axis off
-        colormap( magma )
 
         ylim = get( gca, 'ylim' );
         xlim = get( gca, 'xlim' );
@@ -138,7 +141,9 @@ for plotIdx = 1 : nPlots
 
         if cnt == 1
             axis on
-            set( hAx( cnt ), 'XTickLabel', {} )
+            set( hAx( cnt ),...
+                'XTickLabel', {} )
+            ylabel( 'Freq. (Hz)', 'Parent', hAx( cnt ) )
             box off
 
         end
@@ -150,7 +155,9 @@ for plotIdx = 1 : nPlots
             end
             
             axis on
-            set( hAx( cnt ), 'YTickLabel', {} )
+            set( hAx( cnt ), ...
+                'YTickLabel', {} )
+            xlabel( 'Time (s)', 'Parent', hAx( cnt ) )
             box off
 
         end
@@ -175,3 +182,11 @@ if strcmp( colorScale, 'global' )
 
 end
 
+% HELPER FUNCTION TO CONVERT VECTORS TO CELL
+function labs = vec2cell( vec )
+
+n = length( vec );
+for i = 1 : n
+    labs{ i } = vec( i );
+
+end

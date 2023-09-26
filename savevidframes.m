@@ -1,4 +1,15 @@
 function savevidframes( dir2save, figHandle )
+% SAVEVIDFRAMES rotates 3D plots and saves images for video.
+% 
+% Usage:
+% savevidframes( dir2save, figHandle )
+% 
+% Input:
+% dir2save: directory where the images will be saved.
+% figHandle: handle for figure with 3D plot to save.
+% 
+% Output:
+% Series of images with 3D plot rotated at different angles.
 
 
 % Set up figure properties.
