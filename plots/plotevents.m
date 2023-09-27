@@ -1,4 +1,4 @@
-function plotevents( evTs, yLims, kind )
+function plotevents( evTs, yLims, kind, hAx )
 % PLOTEVENTS plot the location of events in a timeseries plot
 % 
 % Usage:
@@ -14,6 +14,9 @@ function plotevents( evTs, yLims, kind )
 if nargin < 3
     kind = 'lines';
 
+elseif nargin < 4
+    hAx = gca;
+
 end
 
 % Plot events as lines if time-frequency, as patches otherwise.
@@ -22,12 +25,12 @@ switch kind
     case { 'lines', 'line' }
         X = evTs * ones( 1, 2 );
         Y = yLims .* ones( length( evTs ), 1 );
-        line( gca, X', Y',...
+        line( hAx, X', Y',...
             'Color', [ 0.5 0.5 0.5 ],...
             'Linewidth', 2 )
         
     case { 'shades', 'shaded', 'shade' }
-        if isodd( numel( events ) )
+        if isodd( numel( evTs ) )
             error( 'for shaded plot there must be even number of events' )
 
         end
@@ -35,7 +38,7 @@ switch kind
         for i = 1 : 2 : length( evTs )
             X = [ evTs( i ), evTs( i ), evTs( i + 1 ), evTs( i + 1 ) ];
             Y = [ yLims( 1 ), yLims( 2 ), yLims( 2 ), yLims( 1 ) ];
-            patch( X, Y, [ 0.5 0.5 0.5 ],...
+            patch( hAx, X, Y, [ 0.5 0.5 0.5 ],...
                 'FaceAlpha', 0.3,...
                 'EdgeColor', 'none' )
             
