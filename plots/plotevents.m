@@ -1,4 +1,4 @@
-function plotevents( evTs, yLims, kind, hAx )
+function plotevents( evTs, yLims, kind,  color , hAx )
 % PLOTEVENTS plot the location of events in a timeseries plot
 % 
 % Usage:
@@ -14,7 +14,14 @@ function plotevents( evTs, yLims, kind, hAx )
 if nargin < 3
     kind = 'lines';
 
-elseif nargin < 4
+end
+
+if nargin < 4
+    color = [ 0.5 0.5 0.5 ];
+
+end
+
+if nargin < 5
     hAx = gca;
 
 end
@@ -26,7 +33,7 @@ switch kind
         X = evTs * ones( 1, 2 );
         Y = yLims .* ones( length( evTs ), 1 );
         line( hAx, X', Y',...
-            'Color', [ 0.5 0.5 0.5 ],...
+            'Color', color,...
             'Linewidth', 2 )
         
     case { 'shades', 'shaded', 'shade' }
