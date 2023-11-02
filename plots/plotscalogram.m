@@ -1,17 +1,28 @@
 function hAx = plotscalogram( t, f, scalo, coi )
-%%  PLOTSCALOGRAM plots the cwt scalogram.
+% PLOTSCALOGRAM plots the cwt scalogram.
 %
 % Usage:
-%
+% hAx = plotscalogram( t, f, wave )
+% hAx = plotscalogram( t, f, scalo, coi )
 %
 % Input:
-%
+% t: time vector.
+% f: frequency vector.
+% scalo: scalogram from cwt calculation.
+% coi: (optional) cone of influece within the scalogram.
 %
 % Output:
-%
+% hAx: handle to scalogram axes.
 % 
 % Example:
-% 
+% Fs = 100;
+% dt = 1 / Fs;
+% t = 0 : dt : 10;
+% sig = sin( 2 * pi * f * t );
+% figure 
+% plot( t, sig )
+% [ wave, f, coi ] = cwt( sig, "amor", Fs );
+% plotscalogram( t, f, wave, coi )
 
 % Set options default values
 if nargin < 4
