@@ -31,18 +31,17 @@ if nargin < 4
 end
 
 % Convert scalogram to magnitude
-hAx = axes;
 magScalo = abs( scalo );
-imagesc( hAx, t, f, magScalo )
+imagesc( t, f, magScalo )
 axis xy
-set( hAx, "Yscale", "log" )
+set( gca, "Yscale", "log" )
 axis tight
 
 % If exists, plot cone of influence
 if ~isempty( coi )
     hold on
-    semilogy( hAx, t, coi, 'w--', 'LineWidth', 2 )
-    areah = area( hAx, t, coi );
+    semilogy( gca, t, coi, 'w--', 'LineWidth', 2 )
+    areah = area( gca, t, coi );
     areah.EdgeColor = 'none';
     areah.FaceColor = [ 0.8 0.8 0.8 ];
     alpha( areah, 0.4 );
