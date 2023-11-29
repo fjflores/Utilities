@@ -12,6 +12,7 @@ function hAx = plotscalogram( t, f, scalo, coi )
 % coi: (optional) cone of influece within the scalogram.
 %
 % Output:
+% Figure with scalogram.
 % hAx: handle to scalogram axes.
 % 
 % Example:
