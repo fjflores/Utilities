@@ -7,10 +7,11 @@ function s = scatterjit( varargin )
 %   'Jit' or 'Jitter': the amount of jitter desired. Note: 0.1 jitter will
 %       lead to points jittered +/-0.1 around the original value.
 %   'Axis': which axis to jitter around. Options: 'x' (default), 'y', or 
-%       'both'. If both, 2 jitter values must be listed: [ x, y ]. If only
-%       one is listed, it will jitter the same amount in both axes.
+%       'both'. If both, 2 jitter values should be listed: [ x, y ]. If 
+%       only one is listed, it will jitter the same amount in both axes.
 
 % Set default values.
+jit = 0; 
 ax2jit = 'x';
 
 % Find the relevant Name-Value pair.
@@ -35,7 +36,6 @@ end
 
 if ~exist( 'jitIdx', 'var' ) % Deal with cases where function is called 
 % without a jitter N-V pair.
-    jit = 0;
     args4scat = args;
     warning( 'No jitter amount selected.' )
     
@@ -66,12 +66,12 @@ end
 % Unpacks jit into jit values for each axis.
 switch ax2jit
     case { 'x', 'X' }
-        xJit = jit;
+        xJit = jit( 1 );
         yJit = 0;
         
     case { 'y', 'Y' }
         xJit = 0;
-        yJit = jit;
+        yJit = jit( 1 );
         
     case { 'both', 'xy', 'XY' }
         if numel( jit ) == 2
