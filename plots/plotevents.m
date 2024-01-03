@@ -1,4 +1,4 @@
-function plotevents( evTs, yLims, kind,  color , hAx )
+function plotevents( evTs, yLims, kind, color, hAx )
 % PLOTEVENTS plot the location of events in a timeseries plot
 % 
 % Usage:
@@ -30,6 +30,11 @@ end
 kind = lower( kind );
 switch kind
     case { 'lines', 'line' }
+        if isrow( evTs )
+            evTs = evTs';
+
+        end
+        
         X = evTs * ones( 1, 2 );
         Y = yLims .* ones( length( evTs ), 1 );
         line( hAx, X', Y',...
