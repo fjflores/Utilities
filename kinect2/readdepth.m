@@ -1,13 +1,29 @@
+%% Read depth file
 clear all
 close all
 clc
 
-fid = fopen('KinectDepth.bin', 'r');
-data16 = fread(fid, Inf, 'uint16');
-fclose(fid);
+transDir = "E:\Dropbox (MIT)";
+dataDir = "E:\Temp\TestKinect";
+baseName = "KinectDepth";
+condition = "_good";
+f2check = fullfile( transDir, strcat( baseName, condition ) );
+% f2save = fullfile( dataDir, strcat( baseName, ".bin" ) );
 
-% data11 = bitand(data, 2^11-1);
+%% Check if file is zipped and unzip 
+contents = dir( strcat( f2check, "*" ) );
+[ ~, ~, ext ] = fileparts( contents( 1 ).name );
+if strcmp( ext, ".zip" )
+    unzip( strcat( f2check, ext ), dataDir )
 
+end
+
+%% Read bin file using memory mapping
+m = memmapfile( fullfile( dataDir, strcat( baseName, ".bin" ) ), ...
+      'Format', 'uint16',...
+      'Writable', false );
+
+%% Plot depth file
 % depth stream figure
 H = 424;
 W = 512;
@@ -22,15 +38,17 @@ colorbar
 caxis( [ 0 4000 ] )
 
 
-data16( data16 > outOfRange ) = outOfRange;
+% data16( data16 > outOfRange ) = outOfRange;
 nSamplesPerFrame = W * H;
-nData = length( data16 );
+nData = length( m.Data );
 nFrames = nData / nSamplesPerFrame;
 blockIdx = [...
     1 : nSamplesPerFrame : nData;...
     nSamplesPerFrame : nSamplesPerFrame : nData ]';
 for wIdx = 1 : nFrames
-    thisData = data16( blockIdx( wIdx, 1 ) : blockIdx( wIdx, 2 ) );
+    % thisData = data16( blockIdx( wIdx, 1 ) : blockIdx( wIdx, 2 ) );
+    thisData = m.Data( blockIdx( wIdx, 1 ) : blockIdx( wIdx, 2 ) );
+    thisData( thisData > outOfRange ) = outOfRange;
     thisFrame = reshape( thisData, W, H );
     set( h1, 'CData', thisFrame' );
     pause( 1 / 30 )
