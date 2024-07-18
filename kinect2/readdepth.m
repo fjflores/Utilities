@@ -3,11 +3,11 @@ clear all
 close all
 clc
 
-transDir = "E:\Dropbox (MIT)";
-dataDir = "E:\Temp\TestKinect";
+% transDir = "N:\Dropbox (MIT)";
+dataDir = "N:\034_DARPA_ABC\Data\Kinect_test\02";
 baseName = "KinectDepth";
-condition = "_good";
-f2check = fullfile( transDir, strcat( baseName, condition ) );
+% condition = "_good";
+f2check = fullfile( dataDir, baseName )
 % f2save = fullfile( dataDir, strcat( baseName, ".bin" ) );
 
 %% Check if file is zipped and unzip 
@@ -23,38 +23,53 @@ m = memmapfile( fullfile( dataDir, strcat( baseName, ".bin" ) ), ...
       'Format', 'uint16',...
       'Writable', false );
 
-%% Plot depth file
-% depth stream figure
+%% Throw frame 1 and crop
 H = 424;
 W = 512;
 outOfRange = 4000;
-depth = zeros( H, W, 'uint16' );
-figure
-colormap( flipud( magma ) )
-h1 = imagesc( depth, [ 0 outOfRange ] );
-title( 'Depth data' )
-colormap( magma )
-colorbar
-caxis( [ 0 4000 ] )
-
-
-% data16( data16 > outOfRange ) = outOfRange;
 nSamplesPerFrame = W * H;
 nData = length( m.Data );
 nFrames = nData / nSamplesPerFrame;
 blockIdx = [...
     1 : nSamplesPerFrame : nData;...
     nSamplesPerFrame : nSamplesPerFrame : nData ]';
+
+rowData = m.Data( blockIdx( 1, 1 ) : blockIdx( 1, 2 ) );
+rowData( rowData > outOfRange ) = outOfRange;
+frame1 = reshape( rowData, W, H );
+imagesc( frame1 )
+axis equal
+rect = [ 146 47 270 270 ];
+
+%% Plot depth file
+% depth stream figure
+Hnew = rect( 4 );
+Wnew = rect( 3 );
+depth = zeros( Hnew, Wnew, 'uint16' );
+figure
+colormap( flipud( magma ) )
+maxColor = 900;
+h1 = imagesc( depth, [ 0 maxColor ] );
+title( 'Depth data' )
+colormap( magma )
+colorbar
+caxis( [ 500 700 ] )
+axis equal
+
+% v = VideoWriter( fullfile( dataDir, 'mouseDepth.avi' ), 'Motion JPEG AVI' );
+% open( v )
 for wIdx = 1 : nFrames
     % thisData = data16( blockIdx( wIdx, 1 ) : blockIdx( wIdx, 2 ) );
     thisData = m.Data( blockIdx( wIdx, 1 ) : blockIdx( wIdx, 2 ) );
     thisData( thisData > outOfRange ) = outOfRange;
-    thisFrame = reshape( thisData, W, H );
+    rawFrame = reshape( thisData, W, H );
+    thisFrame = imcrop( rawFrame, rect );
     set( h1, 'CData', thisFrame' );
+    % writeVideo( v, double( thisFrame' ./ max( thisFrame, [], 'all' ) ) )
     pause( 1 / 30 )
 
 end
-
+% close( v )
 
 %% Plot point cloud movie 
 clear all
