@@ -4,7 +4,7 @@ close all
 clc
 
 % transDir = "N:\Dropbox (MIT)";
-dataDir = "N:\034_DARPA_ABC\Data\Kinect_test\02";
+dataDir = "N:\034_DARPA_ABC\Data\Kinect_test\03";
 baseName = "KinectDepth";
 % condition = "_good";
 f2check = fullfile( dataDir, baseName )
@@ -38,11 +38,14 @@ rowData = m.Data( blockIdx( 1, 1 ) : blockIdx( 1, 2 ) );
 rowData( rowData > outOfRange ) = outOfRange;
 frame1 = reshape( rowData, W, H );
 imagesc( frame1 )
+colormap( flipud( magma ) )
 axis equal
-rect = [ 146 47 270 270 ];
+% rect = [ 146 47 270 270 ];
+
 
 %% Plot depth file
 % depth stream figure
+rect = [ 221 119 270 270 ];
 Hnew = rect( 4 );
 Wnew = rect( 3 );
 depth = zeros( Hnew, Wnew, 'uint16' );
@@ -51,9 +54,9 @@ colormap( flipud( magma ) )
 maxColor = 900;
 h1 = imagesc( depth, [ 0 maxColor ] );
 title( 'Depth data' )
-colormap( magma )
+colormap( flipud( magma ) )
 colorbar
-caxis( [ 500 700 ] )
+caxis( [ 700 860 ] )
 axis equal
 
 % v = VideoWriter( fullfile( dataDir, 'mouseDepth.avi' ), 'Motion JPEG AVI' );
