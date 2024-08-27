@@ -4,8 +4,8 @@ close all
 clc
 
 % transDir = "N:\Dropbox (MIT)";
-dataDir = "N:\034_DARPA_ABC\Data\Kinect_test\03";
-baseName = "KinectDepth";
+dataDir = "E:\Dropbox (Personal)\Projects\034_DARPA_ABC\Data\M102";
+baseName = "2024-08-05_M102_01_kindepth";
 % condition = "_good";
 f2check = fullfile( dataDir, baseName )
 % f2save = fullfile( dataDir, strcat( baseName, ".bin" ) );
