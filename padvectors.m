@@ -15,11 +15,15 @@ function varargout = padvectors( varargin )
 % Output:
 % a1, b1, c1: padded vectors, except for the original ongest on e that
 % stays the same.
+% 
+% Note that row vectors will be transformed to column vectors and output as
+% such. Re-convert the column to row vectors if needed after using this
+% function.
 
 % Deal with the last element being a string
 if isstring( varargin{ end } )
     method = varargin{ end };
-    varargin{ end } = [];
+    varargin{ end } = [ ];
     num_vectors = nargin - 1;
 
 else
@@ -32,29 +36,37 @@ end
 max_size = max( cellfun( @numel, varargin ) );
 
 % Pad the shorter vectors with zeros
-% paddedVecs = cell( 1, num_vectors );
 for i = 1 : num_vectors
+    thisVec = tocolumn( varargin{ i } );
 
     switch method
-
         case "zeros"
             varargout{ i } = [...
-                varargin{ i },...
-                zeros( 1, max_size - numel( varargin{ i } ) ) ];
+                thisVec;...
+                zeros( max_size - numel( thisVec ), 1 ) ];
 
         case "nans"
             varargout{ i } = [...
-                varargin{ i },...
-                nan( 1, max_size - numel( varargin{ i } ) ) ];
+                thisVec;...
+                nan( max_size - numel( thisVec ), 1 ) ];
 
         case "linear"
-            spacing = diff( varargin{ i } );
-            el2add = max_size - numel( varargin{ i } );
+            spacing = diff( thisVec );
+            el2add = max_size - numel( thisVec );
             varargout{ i } = [...
-                varargin{ i },...
-                varargin{ i }( end ) + ( ( 1 : el2add ) .* spacing( 1 ) ) ];
+                thisVec;...
+                thisVec( end ) + ( ( 1 : el2add ) .* spacing( 1 ) )' ];
 
     end
 
 end
 
+% helper subfunction to change row to column vector
+function vec = tocolumn( vec2change )
+if isrow( vec2change )
+    vec = vec2change.';
+
+else
+    vec = vec2change;
+
+end
