@@ -26,7 +26,7 @@ delay = regexp( hdr{ 33 }, '(\d+)', 'match' );
 
 hdrInfo.day = day{ 1 };
 hdrInfo.timeOpen = timeOpen{ 1 };
-hdrInfo.timeClose = timeClose{ 1 };
+% hdrInfo.timeClose = timeClose{ 1 };
 hdrInfo.Fs = str2double( Fs{ 1 } );
 hdrInfo.convFactor = str2double( convFactor{ 1 } );
 hdrInfo.ADName = ADName{ 1 };

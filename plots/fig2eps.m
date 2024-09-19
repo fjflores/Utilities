@@ -2,7 +2,9 @@ function fig2eps( varargin )
 %FIG2EPS converts all matlab figs in a folder to eps.
 %
 % Usage:
-% fig2eps( varargin )
+% fig2eps( )
+% fig2eps( hFig )
+% fig2eps( hFig, path2save )
 % 
 % Input:
 % no argument: Run fig2eps in the folder containing the figures to convert.
@@ -38,3 +40,13 @@ if nargin == 1
 
 end
 
+if nargin == 2
+    hFig = varargin{ 1 };
+    path2save = varargin{ 2 };
+    hFig.Renderer = 'painters';
+    retDir = pwd;
+    cd( path2save )
+    print( hFig, '-depsc2' );
+    cd( retDir );
+
+end
