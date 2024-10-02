@@ -24,7 +24,7 @@ if exist( "yLims", "var" )
 
     end
     f = f( fIdx );
-    S = S( fIdx, : );
+    S = S( :, fIdx );
 
 end
 
@@ -34,5 +34,5 @@ colormap( magma )
 caxis( [ 0 30 ] )
 hold on
 tDelta = t( logical( bandtc.deltaCleanIdx ) );
-plot( tDelta, yLims( 2 ), '_w', "LineWidth", 4 )
+plot( tDelta, yLims( 2 ) - 2, '_w', "LineWidth", 4 )
 box off
