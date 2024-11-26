@@ -12,21 +12,26 @@ function msg = humantime( timeNum )
 % Output:
 % msg: message with time in human readable format.
 
+if ischar( timeNum )
+    error( "Input must be a number" )
+
+end
+
 if timeNum <= 1
     secs = round( timeNum );
     msg = sprintf( '%u sec', secs );
 
-elseif timeNum > 1 && timeNum < 60
+elseif timeNum > 1 & timeNum < 60
     secs = round( timeNum );
     msg = sprintf( '%u secs', secs );
 
-elseif timeNum >= 60 && timeNum < 61
+elseif timeNum >= 60 & timeNum < 61
     preMins = timeNum / 60;
     mins = floor( preMins );
     secs = round( 60 * ( preMins - mins ) );
     msg = sprintf( '%u min %u secs', mins, secs );
 
-elseif timeNum >= 61 && timeNum < 3600
+elseif timeNum >= 61 & timeNum < 3600
     preMins = timeNum / 60;
     mins = floor( preMins );
     secs = round( 60 * ( preMins - mins ) );
