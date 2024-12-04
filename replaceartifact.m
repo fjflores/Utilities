@@ -1,4 +1,4 @@
-function [ dataClean, remIdx ] = replaceartifact( signal, t, artTimes, meth )
+function [ dataClean, remIdx, tClean ] = replaceartifact( signal, t, artTimes, meth )
 %REPLACEARTIFACT replaces artifacts with nans.
 %
 % Usage:
@@ -9,8 +9,9 @@ function [ dataClean, remIdx ] = replaceartifact( signal, t, artTimes, meth )
 % signal: column vector to be processed.
 % t: timestamps for the signal vector.
 % artTimes = two-colum matrix of start and end times for artifacts.
-% meth: either 'nan' to replace withs nan's, or 'linear', to interpolate
-% with a linear function.
+% meth: 'nan' to replace withs nan's, 'linear' to interpolate
+% with a linear function, 'none' to just delete the data. This also
+% outputs the removed time.
 %
 % Output:
 % dataClean = data artifacts removed.
@@ -54,6 +55,18 @@ switch meth
         % replaces artifacts with nans
         dataClean = signal;
         dataClean( remIdx ) = nan;
+
+    case( 'zeros' )
+        dataClean = signal;
+        dataClean( remIdx ) = 0;
+
+    case( 'none' )
+        fprintf( 'Removing bad data\n' )
+        % remove artifactual chunk
+        dataClean = signal;
+        dataClean( remIdx, : ) = [ ];
+        tClean = t;
+        tClean( remIdx ) = [ ];
         
     case( 'linear' )
         fprintf( 'Replacing with nearest linear fit\n' )
