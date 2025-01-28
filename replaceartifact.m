@@ -1,4 +1,4 @@
-function [ dataClean, remIdx, tClean ] = replaceartifact( signal, t, artTimes, meth )
+function [ dataClean, remIdx, tClean ] = replaceartifact( signal, t, artTimes, meth, padding )
 %REPLACEARTIFACT replaces or removes artifacts, depending on desired method.
 %
 % Usage:
@@ -14,6 +14,9 @@ function [ dataClean, remIdx, tClean ] = replaceartifact( signal, t, artTimes, m
 % meth: 'nan' to replace withs nan's, 'zeros' to replace with zeros,
 % 'linear' to interpolate with a linear function, 'none' to just delete the
 % data. This also outputs the removed time.
+% padding: two-element vector that adds additional padding to beginning and
+% end of artifact (optional). E.g. [ 0.5 0.5 ] will remove an additional
+% 0.5 seconds before and after the artTimes.
 %
 % Output:
 % dataClean: data with artifacts removed.
@@ -23,6 +26,10 @@ function [ dataClean, remIdx, tClean ] = replaceartifact( signal, t, artTimes, m
 %
 % Beware that looks for times, not points (unsafe, but ok as long as only
 % one signal is being processed).
+
+if ~exist( 'padding', 'var' )
+    padding = [ 0 0 ];
+end
 
 % first, remove any artifact time lower than t(1) or greater than t(end)
 idx1 = artTimes( :, 1 ) < t( 1 );
@@ -34,8 +41,8 @@ remIdx = false( length( t ), 1 );
 % first, remove artifact epochs
 fprintf( 'Removing artifacts...' )
 for artCnt = 1 : size( artTimes, 1 )
-    thisStart = artTimes( artCnt, 1 ) - 0.5;
-    thisEnd = artTimes( artCnt, 2 ) + 0.5;
+    thisStart = artTimes( artCnt, 1 ) - padding( 1 );
+    thisEnd = artTimes( artCnt, 2 ) + padding( 2 );
     artIdx = t >= thisStart & t <= thisEnd;
     
     % test that t is either a row or column vector. Throw exception
