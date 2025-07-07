@@ -18,8 +18,8 @@ if ischar( timeNum )
 end
 
 if timeNum <= 1
-    secs = round( timeNum );
-    msg = sprintf( '%u sec', secs );
+    % less than a second case
+    msg = sprintf( '<1 sec' );
 
 elseif timeNum > 1 & timeNum < 60
     secs = round( timeNum );
