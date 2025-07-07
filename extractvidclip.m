@@ -3,8 +3,8 @@ function extractvidclip( vidPath, evTs, varargin )
 % of the start and end of the event of interest.
 %
 % Usage:
-% extractvidclip( vidDir, v2read, evTs )
-% extractvidclip( vidDir, v2read, evTs, Name, Value )
+% extractvidclip( vidPath, evTs )
+% extractvidclip( vidPath, evTs, Name, Value )
 %
 % Input:
 % vidPath: full path (including extension) of video to extract clip from.
@@ -79,7 +79,7 @@ for evIdx = 1 : nEvs
     t2disp = ( tClipStart : 1 / fps : tClipEnd - 1 / fps ) - tEvStart;
     
     thisEvMsg = sprintf( '%s%i', evMsg, evIdx );
-    v2save = [ vidName, '_', thisEvMsg, vidExt ];
+    v2save = strcat( vidName, '_', thisEvMsg, vidExt );
     outVideo = VideoWriter( fullfile( saveDir, v2save ), 'Motion JPEG AVI');
     outVideo.FrameRate = fps;
     
