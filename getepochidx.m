@@ -1,4 +1,4 @@
-function idx = getepochidx( ts, epochStart, epochLength )
+function indices = getepochidx( ts, epochStart, epochLength )
 
 %GETEPOCHIDX get the indexes for a given epoch (with ms precision).
 % 
@@ -16,28 +16,48 @@ function idx = getepochidx( ts, epochStart, epochLength )
 % positions of the desired epoch to extract.
 
 % convert time values to integers, rounded to microseconds resolution.
-tInt = round( ts .* 1e6 );
-tStart = round( epochStart * 1e6 );
-tEnd = round( epochLength .* 1e6 ) + tStart;
+% tInt = round( ts .* 1e9 );
+% tStart = round( epochStart * 1e9 );
+epochEnd = epochStart + epochLength;
+
+Fs = mean( 1 ./ diff( ts ) );
+nSamps = floor( epochLength * Fs );
 
 % Check that firs time point is less or equal than startTime
-if tStart < tInt( 1 )
+if epochStart < ts( 1 )
     error( 'Epoch start time is lesser than the first timestamp' )
     
-elseif tEnd > tInt( end )
+elseif epochEnd > ts( end )
     error( 'Epoch extends beyond length of time vector' )
     
 else
     % if everything is correct, proceed
-    idx = false( length( ts ), 1 ); % allocate idx vector.
-    rightTail = find( tInt >= tStart );
-    leftTail = find( tInt < tEnd );
+    % idx = false( length( ts ), 1 ); % allocate idx vector.
+    % rightTail = find( ts >= epochStart );
+    % leftTail = find( ts < epochEnd );
     
     % Make sure that output is always even in length.
-    if isodd( length( leftTail ) )
-        leftTail = find( tInt <= tEnd );
-        
-    end
-    idx( rightTail( 1 ) : leftTail( end ) ) = true;
+    % if isodd( length( leftTail ) )
+    %     leftTail = find( tInt <= tEnd );
+    % 
+    % end
+    % idx( rightTail( 1 ) : leftTail( end ) ) = true;
+    % tmpIdx = rightTail( 1 ) : leftTail( end );
+    tmpIdx = find( ts >= epochStart & ts < epochEnd );
     
 end
+
+try
+    indices = tmpIdx( 1 : nSamps );
+
+catch
+    indices = tmpIdx( 1 : nSamps + 1 );
+
+end
+
+
+% Ensure vector 'idx' has even length
+% if mod( length( indices ), 2 ) ~= 0
+%     indices( end ) = []; % Remove last element to make it even
+% 
+% end
