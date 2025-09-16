@@ -1,4 +1,4 @@
-function indices = getepochidx( ts, epochStart, epochLength )
+function indices = getepochidx( ts, epochStart, dur, Fs )
 
 %GETEPOCHIDX get the indexes for a given epoch (with ms precision).
 % 
@@ -9,6 +9,7 @@ function indices = getepochidx( ts, epochStart, epochLength )
 % ts: timestamps vector
 % epochStart: time at which to start the epoch.
 % epochlength: length of the epoch to extract.
+% Fs: if provided, overrides the internal Fs calc.
 % Note that the units have to be consistent.
 % 
 % Output:
@@ -18,10 +19,13 @@ function indices = getepochidx( ts, epochStart, epochLength )
 % convert time values to integers, rounded to microseconds resolution.
 % tInt = round( ts .* 1e9 );
 % tStart = round( epochStart * 1e9 );
-epochEnd = epochStart + epochLength;
+epochEnd = epochStart + dur;
 
-Fs = mean( 1 ./ diff( ts ) );
-nSamps = floor( epochLength * Fs );
+if nargin < 4
+    Fs = mean( 1 ./ diff( ts ) );
+
+end
+nSamps = floor( dur * Fs );
 
 % Check that firs time point is less or equal than startTime
 if epochStart < ts( 1 )
