@@ -1,4 +1,4 @@
-function indices = getepochidx( ts, epochStart, dur, Fs )
+function indices = getepochidx( ts, epochStart, dur )
 
 %GETEPOCHIDX get the indexes for a given epoch (with ms precision).
 % 
@@ -21,11 +21,11 @@ function indices = getepochidx( ts, epochStart, dur, Fs )
 % tStart = round( epochStart * 1e9 );
 epochEnd = epochStart + dur;
 
-if nargin < 4
-    Fs = mean( 1 ./ diff( ts ) );
-
-end
-nSamps = floor( dur * Fs );
+% if nargin < 4
+%     Fs = mean( 1 ./ diff( ts ) );
+% 
+% end
+% nSamps = floor( dur * Fs );
 
 % Check that firs time point is less or equal than startTime
 if epochStart < ts( 1 )
@@ -47,21 +47,21 @@ else
     % end
     % idx( rightTail( 1 ) : leftTail( end ) ) = true;
     % tmpIdx = rightTail( 1 ) : leftTail( end );
-    tmpIdx = find( ts >= epochStart & ts < epochEnd );
+    indices = find( ts >= epochStart & ts < epochEnd );
     
 end
 
-try
-    indices = tmpIdx( 1 : nSamps );
-
-catch
-    indices = tmpIdx( 1 : nSamps + 1 );
-
-end
+% try
+%     indices = tmpIdx( 1 : nSamps );
+% 
+% catch
+%     indices = tmpIdx( 1 : nSamps + 1 );
+% 
+% end
 
 
 % Ensure vector 'idx' has even length
-% if mod( length( indices ), 2 ) ~= 0
-%     indices( end ) = []; % Remove last element to make it even
-% 
-% end
+if mod( length( indices ), 2 ) ~= 0
+    indices( end ) = []; % Remove last element to make it even
+
+end
