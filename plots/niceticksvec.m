@@ -1,4 +1,18 @@
 function ticksVec = niceticksvec( lims, maxTicks )
+% NICETICKSVEC generate a vector of "nice" tick values within given limits
+% 
+% Usage:
+%   ticksVec = niceticksvec( lims, maxTicks )
+%
+% Inputs:
+%   lims: 2-element vector specifying [min, max] limits
+%   maxTicks: maximum number of ticks desired
+%
+% Outputs:
+%   ticksVec: vector of tick values
+% 
+% Example:
+%   ticks = niceticksvec( [0, 100], 5 )
 
 % choose up to this many ticks
 ymin = lims( 1 );
@@ -38,12 +52,15 @@ else
                 bestStep = step;
                 bestNumTicks = numTicks;
                 bestDiff = diff;
+
             elseif bestNumTicks > maxTicks && numTicks < bestNumTicks
                 % If all exceed maxTicks, pick the smallest excess
                 bestStep = step;
                 bestNumTicks = numTicks;
                 bestDiff = diff;
+
             end
+
         end
 
         % build ticks on the chosen step
@@ -54,7 +71,8 @@ else
 
         % ensure we always have at least the endpoints (and <= maxTicks)
         if isempty(ticksVec)
-            ticksVec = linspace(ymin, ymax, min(maxTicks, 2));
+            ticksVec = linspace( ymin, ymax, min( maxTicks, 2) );
+
         end
 
     end
