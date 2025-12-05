@@ -1,80 +1,80 @@
-function ticksVec = niceticksvec( lims, maxTicks )
+function ticksVec = niceticksvec( lims, rawStep )
 % NICETICKSVEC generate a vector of "nice" tick values within given limits
-% 
+% using a target rawStep (spacing) instead of maxTicks.
+%
 % Usage:
-%   ticksVec = niceticksvec( lims, maxTicks )
+%   ticksVec = niceticksvec( lims, rawStep )
 %
 % Inputs:
 %   lims: 2-element vector specifying [min, max] limits
-%   maxTicks: maximum number of ticks desired
+%   rawStep: desired tick spacing (positive scalar)
 %
-% Outputs:
+% Output:
 %   ticksVec: vector of tick values
-% 
-% Example:
-%   ticks = niceticksvec( [0, 100], 5 )
+%
+% Notes:
+%   The function picks a "nice" step near rawStep from {1,2,5,10} * 10^k
+%   (searching one decade below and above the decade of rawStep), then
+%   returns ticks that fall within the provided limits.
 
-% choose up to this many ticks
-ymin = lims( 1 );
-ymax = lims( 2 );
+ymin = lims(1);
+ymax = lims(2);
 
+% handle degenerate ranges
 if ymax <= ymin
-    % degenerate range
     ticksVec = unique([ymin ymax]);
+    return;
+end
 
-else
-    % ideal (raw) step to produce maxTicks
-    rawStep = (ymax - ymin) / (maxTicks - 1);
+% validate rawStep
+if ~(isnumeric(rawStep) && isscalar(rawStep) && rawStep > 0)
+    error('niceticksvec:InvalidRawStep', 'rawStep must be a positive scalar.');
+end
 
-    % handle very small ranges
-    if rawStep <= 0
-        ticksVec = unique([ymin ymax]);
+% quick guard: if desired step larger than range, return endpoints
+rangeVal = ymax - ymin;
+if rawStep >= rangeVal
+    ticksVec = unique([ymin ymax]);
+    return;
+end
 
-    else
-        % choose a "nice" step: 1,2,5,10 times a power of ten
-        mag = 10 ^ floor(log10(rawStep));
-        cand = mag * [1 2 5 10];
-        
-        % Try each candidate and pick the one closest to maxTicks
-        bestStep = cand(1);
-        bestNumTicks = 0;
-        bestDiff = inf;
-        
-        for i = 1:length(cand)
-            step = cand(i);
-            firstTick = ceil(ymin / step) * step;
-            lastTick = floor(ymax / step) * step;
-            numTicks = length(firstTick:step:lastTick);
-            
-            % Prefer candidates that don't exceed maxTicks, but get close
-            diff = abs(numTicks - maxTicks);
-            if numTicks <= maxTicks && (diff < bestDiff || bestNumTicks > maxTicks)
-                bestStep = step;
-                bestNumTicks = numTicks;
-                bestDiff = diff;
+% build candidate steps across neighboring decades
+baseExp = floor(log10(rawStep));
+exps = (baseExp-1):(baseExp+1);
+cands = [];
+for e = exps
+    cands = [cands, (10^e) * [1 2 5 10]]; %#ok<AGROW>
+end
+cands = unique(sort(cands));
 
-            elseif bestNumTicks > maxTicks && numTicks < bestNumTicks
-                % If all exceed maxTicks, pick the smallest excess
-                bestStep = step;
-                bestNumTicks = numTicks;
-                bestDiff = diff;
+% pick candidate closest to rawStep (absolute difference)
+[~, idx] = min(abs(cands - rawStep));
+bestStep = cands(idx);
 
-            end
+% compute first/last ticks that lie within limits (use small tolerance)
+tol = bestStep * 1e-12;
+firstTick = ceil((ymin - tol) / bestStep) * bestStep;
+lastTick  = floor((ymax + tol) / bestStep) * bestStep;
 
-        end
+if lastTick < firstTick
+    % no interior ticks: return endpoints
+    ticksVec = unique([ymin ymax]);
+    return;
+end
 
-        % build ticks on the chosen step
-        step = bestStep;
-        firstTick = ceil(ymin / step) * step;
-        lastTick = floor(ymax / step) * step;
-        ticksVec = firstTick:step:lastTick;
+% generate tick vector and round to sensible precision to avoid float noise
+ticksVec = firstTick : bestStep : lastTick;
 
-        % ensure we always have at least the endpoints (and <= maxTicks)
-        if isempty(ticksVec)
-            ticksVec = linspace( ymin, ymax, min( maxTicks, 2) );
+% round ticks to sensible number of decimals based on step magnitude
+decimals = max(0, -floor(log10(bestStep)) + 6); % keep some safety digits
+ticksVec = round(ticksVec, decimals);
 
-        end
-
-    end
+% ensure endpoints are included if they fall on nice step (or add them if needed)
+if ticksVec(1) > ymin + tol
+    ticksVec = unique([ymin, ticksVec]);
+end
+if ticksVec(end) < ymax - tol
+    ticksVec = unique([ticksVec, ymax]);
+end
 
 end
