@@ -56,4 +56,18 @@ switch kind
             
         end
 
+    case { 'triangles', 'triangle', 'triang' }
+        yTop = yLims( 2 );
+        yOff = 0.8;                        % vertical offset below top of spectrogram (Hz)
+        yTri = max(yTop - yOff, yLims(1)); % ensure inside y-limits
+
+        % plot downward triangles at the epoch times
+        plot( evTs, repmat( yTri, size( evTs ) ), 'v', ...
+            'MarkerSize', 10, ...
+            'MarkerFaceColor', [1 0.6 0.2], ... % orange fill
+            'MarkerEdgeColor', 'k' );
+
+    otherwise
+        error( 'Unknown kind of event plot: %s', kind );
+
 end
