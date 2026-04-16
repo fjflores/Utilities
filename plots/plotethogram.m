@@ -25,31 +25,43 @@ arguments
     opts.States = []
 end
 
+plotLines  = opts.PlotLines;
+stateNames = opts.StateNames;
+singleRow  = opts.SingleRow;
+states2use = opts.States;
+
 % Check input.
 % Check if vector or matrix. convert to matrix if vector
-if isrow( stateLabels ) || iscolumn( stateLabels )
-    % stateLabels is not a matrix. Build one.
+if isvector( stateLabels ) && ~singleRow
+    % stateLabels is a vector. Build a matrix.
     ethoMat = buildethomat( stateLabels );
+    [ nPoints, nStates ] = size( ethoMat );
+    % Makes zeros nans to get transparency in plot.
+    ethoMat( ethoMat == 0 ) = NaN;
     
-else
-    % stateLabels is a matrix.
+elseif singleRow
+    % singleRow is true.
     ethoMat = stateLabels;
+    nPoints = numel( ethoMat );
+    nStates = numel( unique( ethoMat( : ) ) );
+
+else
+    % stateLabels is already a matrix.
+    stateLabels( stateLabels > 0 ) = 1;
+    ethoMat = stateLabels;
+    [ nPoints, nStates ] = size( ethoMat );
+    % Makes zeros nans to get transparency in plot.
+    ethoMat( ethoMat == 0 ) = NaN;
     
 end
-[ nPoints, nStates ] = size( ethoMat );
+
 
 if isempty( t )
     t = 1 : nPoints;
     
 end
 
-plotLines  = opts.PlotLines;
-stateNames = opts.StateNames;
-singleRow  = opts.SingleRow;
-states2use = opts.States;
 
-% Makes zeros nans to get transparency in plot.
-ethoMat( ethoMat == 0 ) = NaN;
 
 % Keep only selected states, NaN-out the rest.
 if ~isempty( states2use )
@@ -70,8 +82,9 @@ if singleRow
     % Plot all states on a single row. Reconstruct label vector from
     % ethoMat so each timepoint gets its state number as the color value.
     labelVec = nan( nPoints, 1 );
-    for s = 1 : nStates
-        labelVec( ethoMat( :, s ) == s ) = s;
+    uniqState = unique( ethoMat( : ) );
+    for iState = 1 : nStates
+        labelVec( ethoMat == uniqState( iState ) ) = iState;
         
     end
     
