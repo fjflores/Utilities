@@ -47,13 +47,23 @@ switch kind
 
         end
 
+        % Optional 4th element of color sets the patch transparency.
+        if numel( color ) >= 4
+            faceAlpha = color( 4 );
+
+        else
+            faceAlpha = 0.3;
+
+        end
+        faceColor = color( 1 : 3 );
+
         for i = 1 : 2 : length( evTs )
             X = [ evTs( i ), evTs( i ), evTs( i + 1 ), evTs( i + 1 ) ];
             Y = [ yLims( 1 ), yLims( 2 ), yLims( 2 ), yLims( 1 ) ];
-            patch( hAx, X, Y, [ 0.5 0.5 0.5 ],...
-                'FaceAlpha', 0.3,...
+            patch( hAx, X, Y, faceColor,...
+                'FaceAlpha', faceAlpha,...
                 'EdgeColor', 'none' )
-            
+
         end
 
     case { 'triangles', 'triangle', 'triang' }
