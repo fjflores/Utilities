@@ -1,8 +1,12 @@
 function hCbar = ffcbar( hFig, hAx, yLab )
-% FFCBAR plots the colorbar in a more useful location with label.
+% FFCBAR plots a lean colorbar that tracks the axes plot box.
 %
 % Description:
-% Plots a colorbar that does not changes the size of the attached axes.
+% Plots a narrow colorbar to the right of the axes plot box without
+% changing the size of the attached axes. The colorbar height always
+% matches the visible plot box (including axis square/equal/image), and
+% it is re-positioned automatically whenever the axes are redrawn (figure
+% resize, limit changes, aspect ratio changes, etc.).
 %
 % Usage:
 % ffcbar
@@ -12,93 +16,79 @@ function hCbar = ffcbar( hFig, hAx, yLab )
 % hCbar = ffcbar( hFig, hAx, yLab )
 %
 % Input:
-% hFig: figure handle.
-% hAx: axes handle.
-% yLab: Label of colorbar y-axis.
+% hFig: figure handle. Default: gcf.
+% hAx: axes handle. Default: current axes of hFig.
+% yLab: Label of colorbar y-axis. Default: empty.
 %
 % Output:
 % hCbar: handle to colorbar.
 %
-% Shortcomnings:
-% Orientation is limited to 'EastOutside'.
+% Shortcomings:
+% Orientation is limited to the right side of the axes.
+% Plot box computation assumes a 2-D view.
+% Not intended for axes inside a tiledlayout.
 
 % Check user input.
-if nargin == 0
-    hFig = gcf;
-    hAx = gca;
-    yLab = {};
-    flagLabel = false;
-    
-elseif nargin == 1
-    if strcmp( class( hFig ), 'matlab.ui.Figure' )
-        hAx = gca;
-        yLab = {};
-        flagLabel = false;
-        
-    else
-        error( 'First argument must be a Figure handle.' )
-        
+if nargin < 1 || isempty( hFig ), hFig = gcf; end
+if nargin < 2 || isempty( hAx ),  hAx  = hFig.CurrentAxes; end
+if nargin < 3, yLab = ''; end
+assert( isa( hFig, 'matlab.ui.Figure' ), 'First argument must be a Figure handle.' )
+assert( isa( hAx, 'matlab.graphics.axis.Axes' ), 'Second argument must be an Axes handle.' )
+
+gapPx   = 6;   % gap between plot box and colorbar, in pixels.
+widthPx = 8;   % fixed colorbar thickness, in pixels.
+
+% Passing Position (and no Location) sets Location to 'manual', so the
+% axes are not resized.
+hCbar = colorbar( hAx, 'Units', 'pixels', 'Position', cbarPos() );
+hCbar.Label.String = yLab;
+
+% Re-place on every axes redraw (figure resize, axis square, limits, etc.).
+lis = addlistener( hAx, 'MarkedClean', @( ~, ~ ) place() );
+hCbar.DeleteFcn = @( ~, ~ ) delete( lis );
+
+    function place()
+        if ~isvalid( hCbar ) || ~isvalid( hAx ), return; end
+        p = cbarPos();
+        if any( abs( hCbar.Position - p ) > 0.5 ) % avoid redraw loops.
+            hCbar.Position = p;
+
+        end
+
     end
-    
-elseif nargin == 2
-    if strcmp( class( hAx ), 'matlab.graphics.axis.Axes' )
-        yLab = {};
-        flagLabel = false;
-        
-    else
-        error( 'Second argument must be an Axes handle.' )
-        
+
+    function p = cbarPos()
+        box = plotBoxPx( hAx );
+        p = [ box( 1 ) + box( 3 ) + gapPx, box( 2 ), widthPx, box( 4 ) ];
+
     end
-    
+
+end
+
+
+function box = plotBoxPx( hAx )
+% Visible plot box in pixels, relative to the axes' parent (2-D views).
+
+box = getpixelposition( hAx );
+stretchToFill = strcmp( hAx.DataAspectRatioMode, 'auto' ) && ...
+    strcmp( hAx.PlotBoxAspectRatioMode, 'auto' ) && ...
+    strcmp( hAx.CameraViewAngleMode, 'auto' );
+if stretchToFill, return; end
+
+pbar = hAx.PlotBoxAspectRatio; % kept current by MATLAB even under axis equal.
+r = pbar( 1 ) / pbar( 2 ); % width / height of the drawn box.
+if box( 3 ) / box( 4 ) > r
+    % Box limited by height: centered horizontally.
+    wNew = box( 4 ) * r;
+    box( 1 ) = box( 1 ) + ( box( 3 ) - wNew ) / 2;
+    box( 3 ) = wNew;
+
 else
-    flagLabel = true;
-    
+    % Box limited by width: centered vertically.
+    hNew = box( 3 ) / r;
+    box( 2 ) = box( 2 ) + ( box( 4 ) - hNew ) / 2;
+    box( 4 ) = hNew;
+
 end
 
-% Get axis position. The 2nd and 4th element are the necessary ones.
-set( hFig, 'Units', 'Normalized' );
-set( hAx, 'Units', 'Normalized' );
-
-% Get standard axes position
-axPos = hAx.Position;
-left = axPos( 1 );
-bott = axPos( 2 );
-w = axPos( 3 );
-h = axPos( 4 );
-
-% Checck for axis square and update positions
-if sum( hAx.PlotBoxAspectRatio ) == 3
-    %     if height is greater than width
-    if h > w
-        left = left + w + 0.01; % place the cbar an epsilon beyond the axes.
-        bott = bott + ( h - w ) / 2;
-        h = w;
-        
-    elseif w > h
-        left = left + ( w - ( 1.9 * h ) ) + 0.01; % place the cbar an epsilon beyond the axes.
-        
-    end
-    
-else
-    % normal case
-    left = left + w + 0.01;
-    
 end
-
-% Create colorbar at those positions.
-w = 0.0084; % fixed, narrow width.
-cBarPos = [ left bott w h ];
-hCbar = colorbar(...
-    'Units', 'Normalized',...
-    'Position', cBarPos,...
-    'Location', 'EastOutside' );
-
-if flagLabel
-    hCbar.Label.String = yLab;
-    
-end
-
-
-
-
-
